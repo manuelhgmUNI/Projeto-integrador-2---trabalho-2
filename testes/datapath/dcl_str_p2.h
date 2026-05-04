@@ -9,7 +9,7 @@
         bool sinais[20];
     }typ_state;
 
-    enum
+    enum // sinais
     {
         ControleUla1 =  0,
         ControleUla2 =  1,
@@ -31,7 +31,6 @@
         estado1 = 17,
         estado2 = 18,
         estado3 = 19
-        
     };
     
 

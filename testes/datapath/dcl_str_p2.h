@@ -25,10 +25,34 @@
     
     typedef struct 
     {
-        
+        typ_dados dados; // dados no datapath
+
         typ_all_reg registrador;
         bool sinais[20];
     }typ_state;
+
+    typedef struct // valores no caminho de dados
+    {
+        uint8_t mux_mem; // endereço da memoria
+        int16_t saida_mem; // saida da memoria
+        uint8_t mux_reg_dest; // mux do rt e rd
+        uint8_t mux_mem_reg; // mux do dado no banco
+
+        int8_t rs; // saida do banco
+        int8_t rt; // saida do banco
+
+        int8_t A; // saida do intermediario A
+        int8_t B; // saida do intermediario B
+
+
+        int8_t mux_ula; // mux de entrada da ula
+        bool zero_ula; // sinal zero da ula
+        int8_t ula; // saida da ula
+
+        uint8_t mux_pc;
+
+    }typ_dados;
+    
 
     enum // sinais do controle
     {

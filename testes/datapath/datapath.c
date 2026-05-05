@@ -13,7 +13,7 @@ int caminho_de_dados(typ_state **c, bool clock, bool clear)
     // geração do sinal com or entre PCesc e o resuldado da and brench e zero ula
     // escrita no PC
 
-    mux((**c).registrador.PC, (**c).registrador.intermediario.ULA_saida, (**c).sinais[IouD]);
+    (**c).dados.mux_mem = mux((**c).registrador.PC, (**c).registrador.intermediario.ULA_saida, (**c).sinais[IouD]);
     //acesso a memoria memoria()
 
     // escrita nos intermediarios RD e MDR

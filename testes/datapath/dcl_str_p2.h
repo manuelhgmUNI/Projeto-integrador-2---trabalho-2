@@ -26,7 +26,7 @@
     typedef struct 
     {
         typ_dados dados; // dados no datapath
-
+        
         typ_all_reg registrador;
         bool sinais[20];
     }typ_state;
@@ -45,7 +45,8 @@
         int8_t B; // saida do intermediario B
 
 
-        int8_t mux_ula; // mux de entrada da ula
+        int8_t mux_ulaA; // valor da saida do mux de entrada de cima da ula
+        int8_t mux_ulaB; // valor da saida do mux de entrada de baixo da ula
         bool zero_ula; // sinal zero da ula
         int8_t ula; // saida da ula
 

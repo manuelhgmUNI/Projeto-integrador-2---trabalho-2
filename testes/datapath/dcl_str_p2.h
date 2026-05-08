@@ -4,6 +4,28 @@
 #ifndef dcl_str_p2_H
 #define dcl_str_p2_H
 
+    enum tipos_de_instrucao
+    {
+        r = 1,
+        i = 2,
+        j = 3,
+    };
+
+    typedef struct str_instrucao
+    {
+        enum tipos_de_instrucao tipo;
+        uint16_t instrucao_bruta;
+        char total[18];
+        uint16_t opcode;
+        uint16_t rs;
+        uint16_t rt;
+        uint16_t rd;
+        uint16_t funct;
+        int16_t  immediato;
+        uint16_t addr;
+    } typ_decoded_instruction;
+    typedef typ_decoded_instruction typ_ins;
+
     // declaração das strings projeto 2
 
     typedef struct 
@@ -26,6 +48,7 @@
     typedef struct 
     {
         typ_dados dados; // dados no datapath
+        typ_ins instrucao;
         
         typ_all_reg registrador;
         bool sinais[20];

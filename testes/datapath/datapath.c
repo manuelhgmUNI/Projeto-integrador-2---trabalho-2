@@ -1,45 +1,75 @@
 #include<stdio.h>
+#include<stdlib.h>
 #include<stdint.h>
 #include<stdbool.h>
 #include"dcl_str_p2.h"
+#include"funcoes.h"
 
+void controle(typ_state **c); // somente para testes
 int main() // usado para fins de testes somente
 {
+    typ_state *c = calloc(1, sizeof(typ_state));
 
+    controle(&c);
+
+    free(c);
 }
-void controle(typ_state **c); // somente para testes
 uint8_t mux(uint8_t A,uint8_t B,bool sinal);
 int caminho_de_dados(typ_state **c, bool clock, bool clear)
 {
     // geração do sinal com or entre PCesc e o resuldado da and brench e zero ula
-    // escrita no PC
+    if ( ((**c).sinais[PCEsc]) || ((**c).dados.ula.R.zero && (**c).sinais[Branch]) )
+    {
+        // escrita no pc
+        (**c).registrador.PC = (**c).dados.ULA_saida;
+    }
 
     (**c).dados.mux_mem = mux((**c).registrador.PC, (**c).registrador.intermediario.ULA_saida, (**c).sinais[IouD]);
     //acesso a memoria memoria()
     
     //______________________________________________________________________________________________
-    // escrita nos intermediarios RD e MDR
+    // escrita nos intermediarios RI e MDR
+    if ((**c).sinais[IREsc])
+        (**c).registrador.intermediario.RI = (**c).dados.saida_mem;
+    
+    (**c).registrador.intermediario.RDM = (**c).dados.saida_mem;
+    
     //______________________________________________________________________________________________
 
     // controle
+    controle(c);
+
+    // mux registrador destino 
+    (**c).dados.mux_reg_dest = mux((**c).instrucao.rt, (**c).instrucao.rd, (**c).sinais[RegDst]);
+    // mux valor a ser escrito no registrador
+    (**c).dados.mux_mem_reg = mux((**c).dados.ULA_saida , (**c).registrador.intermediario.RDM, (**c).sinais[MemParaReg]);
+    
     // banco de registradores
-    //
+    Banco_de_registradores((**c).instrucao.rs, (**c).instrucao.rt, (**c).dados.mux_reg_dest, (**c).sinais[EscReg], c);
 
     //______________________________________________________________________________________________
     // escrita nos intermediaros A e B
+    (**c).registrador.intermediario.A = (**c).dados.rs;
+    (**c).dados.A = (**c).registrador.intermediario.A;
+
+    (**c).registrador.intermediario.B = (**c).dados.rt;
+    (**c).dados.B = (**c).registrador.intermediario.B;
     //______________________________________________________________________________________________
 
     
-    (**c).dados.mux_ulaA = mux((**c).dados.PC, (**c).dados.A, (**c).sinais[UlaFonteA]); // mux entrada superior
+    (**c).dados.mux_ulaA = mux((**c).registrador.PC, (**c).dados.A, (**c).sinais[UlaFonteA]); // mux entrada superior
 
     (**c).dados.mux_ulaB = mux((**c).dados.B, 1, (**c).sinais[UlaFonteB0]);
-    (**c).dados.mux_ulaB = mux((**c).dados.mux_ulaB, /*imediato*/ 0 , (**c).sinais[UlaFonteB1]); // mux ula entrada inferior
+    (**c).dados.mux_ulaB = mux((**c).dados.mux_ulaB, (**c).instrucao.immediato, (**c).sinais[UlaFonteB1]); // mux ula entrada inferior
+    
     
     // ula
-
+    (**c).dados.ula.R = ula((**c).dados.A, (**c).dados.B ,(**c).dados.ula.Op );
 
     //______________________________________________________________________________________________
     // escrita na saida da ula
+    (**c).registrador.intermediario.ULA_saida = (**c).dados.ula.R.resultado;
+    (**c).dados.ULA_saida = (**c).registrador.intermediario.ULA_saida;
     //______________________________________________________________________________________________
 
 

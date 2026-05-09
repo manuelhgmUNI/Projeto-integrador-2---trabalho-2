@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "structs.h"
+#include "dcl_str_p2.h"
 
 typ_ulaR ula(int A, int B, typ_ulaOp operacao) {
     typ_ulaR res= {0, false, false};

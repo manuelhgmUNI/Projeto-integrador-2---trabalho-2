@@ -26,6 +26,25 @@
     } typ_decoded_instruction;
     typedef typ_decoded_instruction typ_ins;
 
+    typedef enum {
+        ADD = 0,
+        SUB = 2,
+        AND = 4,
+        OR  = 5,
+    } typ_ulaOp;
+
+    typedef struct {
+        int resultado;
+        bool zero;
+        bool overflow;
+    } typ_ulaR;
+
+    typedef struct 
+    {
+        typ_ulaOp Op;
+        typ_ulaR R;
+    }typ_ula;
+
     // declaração das strings projeto 2
 
     typedef struct 
@@ -39,22 +58,13 @@
 
     typedef struct 
     {
-        uint8_t banco[8];
+        int8_t banco[8];
         tpy_int_reg intermediario;
         uint8_t PC;
     }typ_all_reg;
     
-    
+    // valores no caminho de dados
     typedef struct 
-    {
-        typ_dados dados; // dados no datapath
-        typ_ins instrucao;
-        
-        typ_all_reg registrador;
-        bool sinais[20];
-    }typ_state;
-
-    typedef struct // valores no caminho de dados
     {
         uint8_t mux_mem; // endereço da memoria
         int16_t saida_mem; // saida da memoria
@@ -70,12 +80,22 @@
 
         int8_t mux_ulaA; // valor da saida do mux de entrada de cima da ula
         int8_t mux_ulaB; // valor da saida do mux de entrada de baixo da ula
-        bool zero_ula; // sinal zero da ula
-        int8_t ula; // saida da ula
+
+        typ_ula ula;
+        int8_t ULA_saida;
 
         uint8_t mux_pc;
 
     }typ_dados;
+
+    typedef struct 
+    {
+        typ_dados dados; // dados no datapath
+        typ_ins instrucao;
+        
+        typ_all_reg registrador;
+        bool sinais[20];
+    }typ_state;
     
 
     enum // sinais do controle

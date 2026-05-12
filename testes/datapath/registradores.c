@@ -32,7 +32,7 @@ void imprime_registradores(int8_t **banco) {
 void Banco_de_registradores(uint8_t rs, uint8_t rt, uint8_t rd, bool esc_reg, typ_state **state)
 {
     (**state).dados.rs = (**state).registrador.banco[rs];
-    (**state).dados.rs = (**state).registrador.banco[rt];
+    (**state).dados.rt = (**state).registrador.banco[rt];
     
     if (esc_reg)
         escreve_registrador((**state).registrador.banco, rd, (**state).dados.mux_reg_dest);

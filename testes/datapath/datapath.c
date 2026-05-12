@@ -10,12 +10,42 @@ int main() // usado para fins de testes somente
 {
     typ_state *c = calloc(1, sizeof(typ_state));
 
-    controle(&c);
+    //controle(&c);
+    
+    
+
+    (*c).sinais[estado3] = 0;
+    (*c).sinais[estado2] = 0;
+    (*c).sinais[estado1] = 0;
+    (*c).sinais[estado0] = 0;
+
+    caminho_de_dados(&c, 0);
+
+    (*c).sinais[estado3] = 0;
+    (*c).sinais[estado2] = 0;
+    (*c).sinais[estado1] = 0;
+    (*c).sinais[estado0] = 1;
+
+    caminho_de_dados(&c, 0);
+
+    (*c).sinais[estado3] = 0;
+    (*c).sinais[estado2] = 1;
+    (*c).sinais[estado1] = 1;
+    (*c).sinais[estado0] = 1;
+
+    caminho_de_dados(&c, 0);
+
+    (*c).sinais[estado3] = 1;
+    (*c).sinais[estado2] = 0;
+    (*c).sinais[estado1] = 0;
+    (*c).sinais[estado0] = 0;
+
 
     free(c);
 }
+
 uint8_t mux(uint8_t A,uint8_t B,bool sinal);
-int caminho_de_dados(typ_state **c, bool clock, bool clear)
+int caminho_de_dados(typ_state **c, bool clear)
 {
     // geração do sinal com or entre PCesc e o resuldado da and brench e zero ula
     if ( ((**c).sinais[PCEsc]) || ((**c).dados.ula.R.zero && (**c).sinais[Branch]) )
@@ -25,16 +55,10 @@ int caminho_de_dados(typ_state **c, bool clock, bool clear)
     }
 
     (**c).dados.mux_mem = mux((**c).registrador.PC, (**c).registrador.intermediario.ULA_saida, (**c).sinais[IouD]);
+    
+    
     //acesso a memoria memoria()
-    
-    //______________________________________________________________________________________________
-    // escrita nos intermediarios RI e MDR
-    if ((**c).sinais[IREsc])
-        (**c).registrador.intermediario.RI = (**c).dados.saida_mem;
-    
-    (**c).registrador.intermediario.RDM = (**c).dados.saida_mem;
-    
-    //______________________________________________________________________________________________
+
 
     // controle
     controle(c);
@@ -47,16 +71,7 @@ int caminho_de_dados(typ_state **c, bool clock, bool clear)
     // banco de registradores
     Banco_de_registradores((**c).instrucao.rs, (**c).instrucao.rt, (**c).dados.mux_reg_dest, (**c).sinais[EscReg], c);
 
-    //______________________________________________________________________________________________
-    // escrita nos intermediaros A e B
-    (**c).registrador.intermediario.A = (**c).dados.rs;
-    (**c).dados.A = (**c).registrador.intermediario.A;
-
-    (**c).registrador.intermediario.B = (**c).dados.rt;
-    (**c).dados.B = (**c).registrador.intermediario.B;
-    //______________________________________________________________________________________________
-
-    
+    // mux ula
     (**c).dados.mux_ulaA = mux((**c).registrador.PC, (**c).dados.A, (**c).sinais[UlaFonteA]); // mux entrada superior
 
     (**c).dados.mux_ulaB = mux((**c).dados.B, 1, (**c).sinais[UlaFonteB0]);
@@ -66,12 +81,37 @@ int caminho_de_dados(typ_state **c, bool clock, bool clear)
     // ula
     (**c).dados.ula.R = ula((**c).dados.A, (**c).dados.B ,(**c).dados.ula.Op );
 
+    // fim do clock
     //______________________________________________________________________________________________
-    // escrita na saida da ula
+        if (clear)
+        {
+            (**c).registrador = (typ_all_reg) {0};
+            (**c).dados = (typ_dados) {0};
+        }
+
+    // escrita nos intermediarios
+
+    // RI
+    if ((**c).sinais[IREsc])
+        (**c).registrador.intermediario.RI = (**c).dados.saida_mem;
+    
+
+    // MDR
+    (**c).registrador.intermediario.RDM = (**c).dados.saida_mem;
+
+    // A
+    (**c).registrador.intermediario.A = (**c).dados.rs;
+    (**c).dados.A = (**c).registrador.intermediario.A;
+
+    // B
+    (**c).registrador.intermediario.B = (**c).dados.rt;
+    (**c).dados.B = (**c).registrador.intermediario.B;
+
+    // saida da ula
     (**c).registrador.intermediario.ULA_saida = (**c).dados.ula.R.resultado;
     (**c).dados.ULA_saida = (**c).registrador.intermediario.ULA_saida;
-    //______________________________________________________________________________________________
 
+    //______________________________________________________________________________________________
 
 }
 

@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include "structs.h"
+#include "dcl_str_p2.h"
 #include "funcoes.h"
 
-int carregar_memoria_unificada(typ_memoria_principal **mem_out)
+int carregar_memoria_unificada(typ_memoria_principal *mem)
 {
     char nome_arquivo[25];
     printf("Nome do arquivo .mem: ");
@@ -17,8 +17,6 @@ int carregar_memoria_unificada(typ_memoria_principal **mem_out)
         return 0;
     }
 
-    typ_memoria_principal *mem = (typ_memoria_principal *) calloc(1, sizeof(typ_memoria_principal));
-    if (mem == NULL) { fclose(Mem_ins); return 0; }
     memset(mem->palavras, 0, sizeof(mem->palavras));
 
     char buffer[50];
@@ -27,6 +25,7 @@ int carregar_memoria_unificada(typ_memoria_principal **mem_out)
     int lendo_dados = 0;
 
     while (fgets(buffer, sizeof(buffer), Mem_ins) != NULL) {
+        
         buffer[strcspn(buffer, "\r\n")] = '\0';
         if (strlen(buffer) == 0) continue;
 
@@ -51,6 +50,5 @@ int carregar_memoria_unificada(typ_memoria_principal **mem_out)
     }
 
     fclose(Mem_ins);
-    *mem_out = mem;
-    return 256; // Retorna o tamanho total 
+    return 256; 
 }

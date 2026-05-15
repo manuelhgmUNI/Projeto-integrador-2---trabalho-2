@@ -13,7 +13,7 @@ typ_ulaOp controle_ula(bool c1, bool c2, bool c3, uint8_t funct)
     // 001 -> SUB
     if (!c1 && !c2 && c3)
     {
-        return ADD;
+        return SUB;
     }
 
     // 010 -> tipo R

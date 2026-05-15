@@ -11,25 +11,27 @@
    
     // ULA
     typ_ulaR ula(int A, int B, typ_ulaOp operacao);
+    typ_ulaOp controle_ula(bool c1, bool c2, bool c3, uint8_t funct);
     
     // Controle e Datapath
     void controle(typ_state **c);
-    void caminho_de_dados(typ_state **c, bool clear);
+    void decodifica_estado_para_sinais(typ_state *s);
+    void step_cycle(typ_state *s);
+    estado_fsm calcula_proximo_estado(estado_fsm estado_atual, uint16_t opcode);
+    void atualiza_estado(typ_state *s, estado_fsm proximo);
+    int caminho_de_dados(typ_state **c, bool clear);
     
     // Banco de Registradores
     void inicia_registradores(typ_state *s);
     void escreve_registrador(int8_t *banco, int indice, int valor);
     int le_registrador(int8_t *banco, int indice);
     void imprime_registradores(typ_state *s);
-    void Banco_de_registradores(typ_state *s);
+    void Banco_de_registradores(uint16_t rs, uint16_t rt, uint8_t dest, bool escreve, typ_state **c);
 
     // mux
     uint8_t mux(uint8_t A, uint8_t B, bool sinal);
 
-    // Ciclo de Execução Principal
-    void executar(typ_state *s);
 
-    // Assembler (para depuração)
     int asm_gerador_char(char *asembly, typ_decoded_instruction *instrucao);
     void asm_gerador(typ_memoria_principal *mem, int n, char *nome_arq);
 

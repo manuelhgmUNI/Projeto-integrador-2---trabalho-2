@@ -60,29 +60,3 @@ void decodifica_estado_para_sinais(typ_state *s) {
     s->sinais[estado3] = (v >> 3) & 1; // bit 3
 }
 
-//ciclo clock 1
-/*void executar(typ_state *s) {
-    //(FSM) gera os sinais de controle baseados no estado atual
-    controle(&s);
-
-    // chama datapath
-    caminho_de_dados(&s, false);
-    
-    //stats
-    if (s->estado == FETCH) {
-        typ_decoded_instruction d = decode_instruction(s->memoria.palavras[s->registrador.PC]);
-        if (d.instrucao_bruta != 0) {
-            s->total_instrucoes++;
-            if      (d.tipo == r) s->r_instrucoes++;
-            else if (d.tipo == i) s->i_instrucoes++;
-            else if (d.tipo == j) s->j_instrucoes++;
-        } else {
-            s->nop_instrucoes++;
-        }
-    }
-
-    // proximo estado borda de clock
-    estado_fsm proximo = calcula_proximo_estado(s->estado, s->ir_decoded.opcode);
-    atualiza_estado(s, proximo);
-}
-    */

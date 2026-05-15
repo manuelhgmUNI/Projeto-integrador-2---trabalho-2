@@ -1,6 +1,5 @@
 #include <stdbool.h>
 #include <stdint.h>
-
 #ifndef dcl_str_p2_H
 #define dcl_str_p2_H
 
@@ -54,10 +53,10 @@
 
     typedef struct {
         uint16_t RI;       // Instruction Register
-        uint16_t RDM;      // Memory Data Register
+        uint16_t MDR;      // Memory Data Register
         int8_t A;          // Reg A (saida rs)
         int8_t B;          // Reg B (saida rt)
-        int8_t ALUOut;     // ALU Out
+        int8_t ULA_saida;     // ALU Out
     } tpy_int_reg;
 
     typedef struct {
@@ -68,27 +67,36 @@
     
     // Valores no datapath (sinais combinacionais)
     typedef struct {
-        uint8_t mux_mem;      // Endereço para memória
-        uint16_t saida_mem;   // Saída da memória
-        uint8_t mux_reg_dest; // Destino no banco de regs (rt ou rd)
-        int8_t mux_mem_reg;   // Dado para o banco de regs (ALUOut ou MDR)
+            uint8_t mux_mem;      
+            uint16_t saida_mem;   
+            uint8_t mux_reg_dest; 
+            int8_t mux_mem_reg;   
 
-        int8_t rs_val;        // Valor lido do banco (rs)
-        int8_t rt_val;        // Valor lido do banco (rt)
+            int8_t rs;            
+            int8_t rt;            
+            int8_t A;             // Valor no registrador A
+            int8_t B;             // Valor no registrador B
 
-        int8_t mux_ula_A;     // Entrada A da ULA
-        int8_t mux_ula_B;     // Entrada B da ULA
-        typ_ulaR ular;        // Resultado da ULA
+            int8_t mux_ulaA;      
+            int8_t mux_ulaB;      
+            
+            struct {
+                typ_ulaR R;
+                typ_ulaOp Op;
+            } ula;                //ula.R e ula.Op
 
-        uint8_t mux_pc;       // Próximo PC
+            int8_t ULA_saida;     
+            uint8_t mux_pc;       
     } typ_dados;
 
     typedef struct {
         typ_memoria_principal memoria;
         typ_all_reg registrador;
-        typ_decoded_instruction ir_decoded;
-        typ_dados caminhos;
+        typ_decoded_instruction instrucao;
+        typ_dados dados;
         bool sinais[20];      
+        bool prox_estado[4];
+
         estado_fsm estado; // Adicionado para rastrear o estado atual da FSM
 
         // stats
@@ -130,6 +138,13 @@
         sw   = 15,
         j_op = 2,
         r_op = 0
+    };
+        enum 
+    {
+        PE3 = 0,
+        PE2 = 1,
+        PE1 = 2,
+        PE0 = 3,
     };
 
 #endif

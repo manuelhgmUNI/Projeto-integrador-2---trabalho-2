@@ -4,6 +4,34 @@
 #include "dcl_str_p2.h"
 #include "assinaturas.h"
 
+static const char *ula_descricao(estado_fsm estado, uint16_t opcode) {
+    switch (estado) {
+        case FETCH:
+            return "PC+1";
+        case DECODE:
+            switch (opcode) {
+                case beq: return "PC+offset";
+                case j_op: return "jump addr";
+                default: return "nao usado";
+            }
+        case MEM_ADDR:
+        case MEM_WRITE:
+            return "base+offset";
+        case MEM_WRITEBACK:
+            return "load data";
+        case EXEC_I:
+            return "addi";
+        case EXEC_R:
+            return "r-type";
+        case BRANCH_COMP:
+            return "compare";
+        case JUMP_COMP:
+            return "jump";
+        default:
+            return "ULA";
+    }
+}
+
 int main(void) {
     int menu = 0;
     typ_state estado;
@@ -115,11 +143,12 @@ int main(void) {
 
             case 7:  // run
                 printf("Executando programa...\n");
-                // Roda até atingir um NOP completo (memória zerada na fase de busca) ou passar do limite
                 do {
-                    executar(&estado);
-                } while (estado.registrador.PC < 128 && 
-                        (estado.estado != FETCH || estado.memoria.palavras[estado.registrador.PC] != 0));
+                    step_cycle(&estado);
+                } while (estado.registrador.PC < num_instrucoes );
+                
+                // Reseta PC para 0 quando execução termina
+                estado.registrador.PC = 0;
                 
                 imprime_registradores(&estado);
                 printf("Execucao finalizada. PC: %d\n", estado.registrador.PC);
@@ -133,7 +162,12 @@ int main(void) {
                 estado_fsm estado_fsm_antes = estado.estado;
 
                 char linha_asm[64] = {0};
-                typ_decoded_instruction dec = decode_instruction(estado.memoria.palavras[pc_antes]);
+                typ_decoded_instruction dec;
+                if (estado.estado == FETCH) {
+                    dec = decode_instruction(estado.memoria.palavras[pc_antes]);
+                } else {
+                    dec = estado.instrucao;
+                }
                 if (dec.instrucao_bruta == 0) {
                     sprintf(linha_asm, "add $r0, $r0, $r0  ");
                 } else {
@@ -149,12 +183,16 @@ int main(void) {
                 int8_t reg_antes[8];
                 for (int i = 0; i < 8; i++) reg_antes[i] = estado.registrador.banco[i];
 
-                executar(&estado);
 
-                printf("| ULA -> resultado: %-4d | zero: %s | overflow: %s  |\n",
-                       estado.caminhos.ular.resultado,
-                       estado.caminhos.ular.zero     ? "sim" : "nao",
-                       estado.caminhos.ular.overflow ? "sim" : "nao");
+                memset(estado.sinais, 0, sizeof(estado.sinais)); 
+                step_cycle(&estado);
+
+                const char *ula_desc = ula_descricao(estado_fsm_antes, dec.opcode);
+                printf("| ULA (%s) -> resultado: %-4d | zero: %s | overflow: %s  |\n",
+                       ula_desc,
+                       estado.dados.ula.R.resultado,
+                       estado.dados.ula.R.zero     ? "sim" : "nao",
+                       estado.dados.ula.R.overflow ? "sim" : "nao");
 
                 printf("| PC: %d -> %d  (Prox Estado: %s)\n", pc_antes, estado.registrador.PC, fsm_nomes[(int)estado.estado]);
                 printf("+----------------------------------------------------+\n");

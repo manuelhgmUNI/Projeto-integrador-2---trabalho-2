@@ -80,9 +80,41 @@ void salva_binario(const typ_state *s, int num_instrucoes, const char *nome) {
     fclose(f);
 }
 
+void step_cycle(typ_state *s) {
+    if (s->estado == FETCH) {
+        s->instrucao = decode_instruction(s->memoria.palavras[s->registrador.PC]);
+    }
+
+    memset(s->sinais, 0, sizeof(s->sinais));
+    decodifica_estado_para_sinais(s);
+    controle(&s);
+    caminho_de_dados(&s, false);
+    estado_fsm proximo = calcula_proximo_estado(s->estado, s->instrucao.opcode);
+    
+    // Contabiliza instrução quando ela completa (transição para FETCH)
+    if (proximo == FETCH && s->estado != FETCH && s->instrucao.instrucao_bruta != 0) {
+        s->total_instrucoes++;
+        
+        // Classifica o tipo de instrução
+        if (s->instrucao.tipo == r) {
+            s->r_instrucoes++;
+            // Conta NOPs (add $r0, $r0, $r0)
+            if (s->instrucao.opcode == r_op && s->instrucao.rs == 0 && s->instrucao.rt == 0 && s->instrucao.rd == 0) {
+                s->nop_instrucoes++;
+            }
+        } else if (s->instrucao.tipo == i) {
+            s->i_instrucoes++;
+        } else if (s->instrucao.tipo == j) {
+            s->j_instrucoes++;
+        }
+    }
+    
+    atualiza_estado(s, proximo);
+}
+
 void run_completo(typ_state *s) {
     int limite = 100000;
     s->estado = FETCH;
     while (s->registrador.PC != 255 && limite-- > 0)
-        executar(s);
+        step_cycle(s);
 }

@@ -40,10 +40,10 @@ void imprime_registradores(typ_state *s) {
     printf("\n+-------[ Registradores ]--------------------------------+\n");
     printf("| PC     : %d\n", s->registrador.PC);
     printf("| IR     : %s  (%s)\n", ri_bin, asm_ri);
-    printf("| MDR    : %d\n", (int16_t)s->registrador.intermediario.RDM);
+    printf("| MDR    : %d\n", (int16_t)s->registrador.intermediario.MDR);
     printf("| A      : %d\n", s->registrador.intermediario.A);
     printf("| B      : %d\n", s->registrador.intermediario.B);
-    printf("| ALUOut : %d\n", s->registrador.intermediario.ALUOut);
+    printf("| ALUOut : %d\n", s->registrador.intermediario.ULA_saida);
     printf("+--------------------------------------------------------+\n");
     printf("| Banco de Registradores:                                |\n");
     for (int i = 0; i < 8; i++) {
@@ -52,13 +52,12 @@ void imprime_registradores(typ_state *s) {
     printf("+--------------------------------------------------------+\n");
 }
 
-void Banco_de_registradores(typ_state *s) {
+void Banco_de_registradores(uint16_t rs, uint16_t rt, uint8_t dest, bool escreve, typ_state **c) {
     
-    s->caminhos.rs_val = s->registrador.banco[s->ir_decoded.rs];
-    s->caminhos.rt_val = s->registrador.banco[s->ir_decoded.rt];
+    (**c).dados.rs = (**c).registrador.banco[rs];
+    (**c).dados.rt = (**c).registrador.banco[rt];
     
-    
-    if (s->sinais[EscReg]) {
-        escreve_registrador(s->registrador.banco, s->caminhos.mux_reg_dest, s->caminhos.mux_mem_reg);
+    if (escreve) {
+        escreve_registrador((**c).registrador.banco, dest, (**c).dados.mux_mem_reg);
     }
 }

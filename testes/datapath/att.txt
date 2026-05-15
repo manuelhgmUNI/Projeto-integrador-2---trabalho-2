@@ -1,0 +1,4 @@
+preciso atualizar a memoria na secao de dados
+ta pegando lixo de memoria na posicao 4
+usar memset no .dat com 0 
+ou ver outra solucao

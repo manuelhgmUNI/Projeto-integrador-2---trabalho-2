@@ -44,7 +44,7 @@ int caminho_de_dados(typ_state **c, bool clear)
     // mux registrador destino 
     (**c).dados.mux_reg_dest = mux((**c).instrucao.rt, (**c).instrucao.rd, (**c).sinais[RegDst]);
     // mux valor a ser escrito no registrador
-    (**c).dados.mux_mem_reg = mux((**c).dados.ULA_saida , (**c).registrador.intermediario.RDM, (**c).sinais[MemParaReg]);
+    (**c).dados.mux_mem_reg = mux((**c).dados.ULA_saida , (**c).registrador.intermediario.MDR, (**c).sinais[MemParaReg]);
     
     // banco de registradores
     Banco_de_registradores((**c).instrucao.rs, (**c).instrucao.rt, (**c).dados.mux_reg_dest, (**c).sinais[EscReg], c);
@@ -79,7 +79,7 @@ int caminho_de_dados(typ_state **c, bool clear)
     
 
     // MDR
-    (**c).registrador.intermediario.RDM = (**c).dados.saida_mem;
+    (**c).registrador.intermediario.MDR = (**c).dados.saida_mem;
 
     // A
     (**c).registrador.intermediario.A = (**c).dados.rs;

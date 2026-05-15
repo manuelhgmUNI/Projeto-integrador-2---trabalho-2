@@ -54,7 +54,7 @@
 
     typedef struct {
         uint16_t RI;       // Instruction Register
-        uint16_t RDM;      // Memory Data Register
+        uint16_t MDR;      // Memory Data Register
         int8_t A;          // Reg A (saida rs)
         int8_t B;          // Reg B (saida rt)
         int8_t ULA_saida;     // ALU Out

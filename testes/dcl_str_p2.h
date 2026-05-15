@@ -93,26 +93,6 @@
 
     }typ_dados;
 
-    typedef struct 
-    {
-        typ_memoria_principal memoria;
-        typ_dados dados; // dados no datapath
-        typ_ins instrucao; // instrução decodificada
-        typ_all_reg registrador;
-        bool sinais[20];
-        bool prox_estado[4];
-        
-        // estatisticas
-        estado_fsm estado;
-        int total_instrucoes;
-        int r_instrucoes;
-        int i_instrucoes;
-        int j_instrucoes;
-        int nop_instrucoes;
-
-    }typ_state;
-    
-
     enum // sinais do controle
     {
         ControleUla1 =  0,
@@ -157,4 +137,33 @@
         PE1 = 2,
         PE0 = 3,
     };
+
+    enum opcodes {
+        addi = 4,
+        beq  = 8,
+        lw   = 11,
+        sw   = 15,
+        j_op = 2,
+        r_op = 0
+    };
+
+    typedef struct 
+    {
+        typ_memoria_principal memoria;
+        typ_dados dados; // dados no datapath
+        typ_ins instrucao; // instrução decodificada
+        typ_all_reg registrador;
+        bool sinais[20];
+        bool prox_estado[4];
+        
+        // estatisticas
+        estado_fsm estado;
+        int total_instrucoes;
+        int r_instrucoes;
+        int i_instrucoes;
+        int j_instrucoes;
+        int nop_instrucoes;
+
+    }typ_state;
+    
 #endif

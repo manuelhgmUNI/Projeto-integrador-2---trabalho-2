@@ -6,38 +6,15 @@
 #include"controle.h"
 #include"funcoes.h"
 
-
+int caminho_de_dados(typ_state **c, bool clear);
 int main() // usado para fins de testes somente
 {
     typ_state *c = calloc(1, sizeof(typ_state));
 
-    //controle(&c);
 
-    (*c).sinais[estado3] = 0;
-    (*c).sinais[estado2] = 0;
-    (*c).sinais[estado1] = 0;
-    (*c).sinais[estado0] = 0;
+    for (int i = 0 ; i < 5; i++)
+        caminho_de_dados(&c, 0);
 
-    caminho_de_dados(&c, 0);
-
-    (*c).sinais[estado3] = 0;
-    (*c).sinais[estado2] = 0;
-    (*c).sinais[estado1] = 0;
-    (*c).sinais[estado0] = 1;
-
-    caminho_de_dados(&c, 0);
-
-    (*c).sinais[estado3] = 0;
-    (*c).sinais[estado2] = 1;
-    (*c).sinais[estado1] = 1;
-    (*c).sinais[estado0] = 1;
-
-    caminho_de_dados(&c, 0);
-
-    (*c).sinais[estado3] = 1;
-    (*c).sinais[estado2] = 0;
-    (*c).sinais[estado1] = 0;
-    (*c).sinais[estado0] = 0;
 
 
     free(c);
@@ -60,7 +37,7 @@ int caminho_de_dados(typ_state **c, bool clear)
     (**c).dados.saida_mem = (**c).memoria.palavras[(**c).dados.mux_mem];
 
     // controle
-    controle(c);
+    Unidade_de_Controle(c);
 
     // mux registrador destino 
     (**c).dados.mux_reg_dest = mux((**c).instrucao.rt, (**c).instrucao.rd, (**c).sinais[RegDst]);
@@ -114,7 +91,7 @@ int caminho_de_dados(typ_state **c, bool clear)
     (**c).registrador.intermediario.ULA_saida = (**c).dados.ula.R.resultado;
     (**c).dados.ULA_saida = (**c).registrador.intermediario.ULA_saida;
 
-    // registrador controle
+    // sinais de controle
     (**c).sinais[estado3] = (**c).prox_estado[PE3];
     (**c).sinais[estado2] = (**c).prox_estado[PE2];
     (**c).sinais[estado1] = (**c).prox_estado[PE1];

@@ -1,4 +1,5 @@
 #include "dcl_str_p2.h"
+#include "controle.h"
 
 void Unidade_de_Controle(typ_state **c)
 {
@@ -7,7 +8,10 @@ void Unidade_de_Controle(typ_state **c)
     controle_ula_fonte(c);
     controle_pc_fonte(c);
 
-    decodifica_estado_para_sinais(c);
+    decodifica_sinais_para_estado(*c);
+    (**c).estado = calcula_proximo_estado((**c).estado, (**c).instrucao.opcode);
+    decodifica_estado_para_sinais(*c);
+
 }
 
 
@@ -102,6 +106,46 @@ void controle_pc_fonte(typ_state **c)
     (**c).sinais[PCFonte0] = (((e3 && !e2) && e1));
 }
 
+estado_fsm calcula_proximo_estado(estado_fsm estado_atual, uint16_t opcode) {
+    estado_fsm proximo = FETCH; // Padrão
+    
+    switch (estado_atual) {
+        case FETCH:
+            proximo = DECODE;
+            break;
+
+        case DECODE:
+            switch (opcode) {
+                case lw:
+                case sw:    proximo = MEM_ADDR;     break;
+                case r_op:  proximo = EXEC_R;       break;
+                case beq:   proximo = BRANCH_COMP;  break;
+                case j_op:  proximo = JUMP_COMP;    break;
+                case addi:  proximo = EXEC_I;       break;
+                default:    proximo = FETCH;        break; //  NOP
+            }
+            break;
+
+        case MEM_ADDR:
+            proximo = (opcode == lw) ? MEM_READ : MEM_WRITE;
+            break;
+
+        case MEM_READ:
+            proximo = MEM_WRITEBACK;
+            break;
+
+        case MEM_WRITEBACK:
+        case MEM_WRITE:
+        case EXEC_R:
+        case EXEC_I:
+        case BRANCH_COMP:
+        case JUMP_COMP:
+            //finalizam e retornam pra fetch
+            proximo = FETCH;
+            break;
+    }
+    return proximo;
+}
 
 void decodifica_estado_para_sinais(typ_state *s) {
     int v = (int)s->estado; // pega o int do enum 0-9
@@ -111,4 +155,15 @@ void decodifica_estado_para_sinais(typ_state *s) {
     s->prox_estado[PE1] = (v >> 1) & 1; // bit 1
     s->prox_estado[PE2] = (v >> 2) & 1; // bit 2
     s->prox_estado[PE3] = (v >> 3) & 1; // bit 3
+}
+
+void decodifica_sinais_para_estado(typ_state *s)
+{
+    s->estado = 0;
+
+    s->estado |= s->sinais[estado0];
+    s->estado |= s->sinais[estado1] << 1;
+    s->estado |= s->sinais[estado2] << 2;
+    s->estado |= s->sinais[estado3] << 3;
+    return;
 }

@@ -1,10 +1,10 @@
-#include<stdbool.h>
-#include<stdint.h>
+#include <stdbool.h>
+#include <stdint.h>
 
 #ifndef dcl_str_p2_H
 #define dcl_str_p2_H
 
-    // estados fsm
+    // 
     typedef enum {
         FETCH = 0,
         DECODE = 1,
@@ -14,11 +14,10 @@
         MEM_WRITE = 5,
         EXEC_I = 6,
         EXEC_R = 7,
-        BRANCH_COMP = 9,
-        JUMP_COMP = 10
+        BRANCH_COMP = 8,
+        JUMP_COMP = 9
     } estado_fsm;
 
-  
     enum tipos_de_instrucao {
         r = 1, i = 2, j = 3
     };
@@ -53,51 +52,46 @@
         bool overflow;
     } typ_ulaR;
 
-
-    typedef struct 
-    {
-        uint16_t RI;       
-        uint16_t RDM;     
-        int8_t A;          
-        int8_t B;          
-        int8_t ULA_saida;  
+    typedef struct {
+        uint16_t RI;       // Instruction Register
+        uint16_t RDM;      // Memory Data Register
+        int8_t A;          // Reg A (saída rs)
+        int8_t B;          // Reg B (saída rt)
+        int8_t ALUOut;     // ALU Output Register
     } tpy_int_reg;
 
-    typedef struct 
-    {
+    typedef struct {
         int8_t banco[8];
         tpy_int_reg intermediario;
         uint8_t PC;
     } typ_all_reg;
     
-    //valores no datapath
-    typedef struct 
-    {
-        uint8_t mux_mem;      // endereco
-        uint16_t saida_mem;   
-        uint8_t mux_reg_dest; // destino no banco de regs
-        int8_t mux_mem_reg;   // dado para o banco de regs
+    // Valores no datapath (sinais combinacionais)
+    typedef struct {
+        uint8_t mux_mem;      // Endereço para memória
+        uint16_t saida_mem;   // Saída da memória
+        uint8_t mux_reg_dest; // Destino no banco de regs (rt ou rd)
+        int8_t mux_mem_reg;   // Dado para o banco de regs (ALUOut ou MDR)
 
-        int8_t rs_val;        
-        int8_t rt_val;        
+        int8_t rs_val;        // Valor lido do banco (rs)
+        int8_t rt_val;        // Valor lido do banco (rt)
 
-        int8_t mux_ula_A;     
-        int8_t mux_ula_B;     
-        typ_ulaR ular;        // result ula
+        int8_t mux_ula_A;     // Entrada A da ULA
+        int8_t mux_ula_B;     // Entrada B da ULA
+        typ_ulaR ular;        // Resultado da ULA
 
-        uint8_t mux_pc;       // prox pc
+        uint8_t mux_pc;       // Próximo PC
     } typ_dados;
 
-    typedef struct 
-    {
-        estado_fsm estado;
+    typedef struct {
         typ_memoria_principal memoria;
         typ_all_reg registrador;
         typ_decoded_instruction ir_decoded;
-        typ_dados caminhos;   // datapath
+        typ_dados caminhos;
         bool sinais[20];      
+        estado_fsm estado; // Adicionado para rastrear o estado atual da FSM
 
-        // estatisticas
+        // stats
         int total_instrucoes;
         int r_instrucoes;
         int i_instrucoes;
@@ -105,33 +99,31 @@
         int nop_instrucoes;
     } typ_state;
 
-    //sinais controle
-    enum 
-    {
-        ControleUla1 =  0,
-        ControleUla2 =  1,
-        ControleUla3 =  2,
-        PCEsc = 3,
-        Branch = 4,
-        IouD = 5,
-        EscMem = 6,
-        IREsc = 7,
-        MemParaReg = 8,
-        RegDst = 9,
-        EscReg = 10,
-        UlaFonteA = 11,
-        UlaFonteB1 = 12,
-        UlaFonteB0 = 13,
-        PCFonte1 = 14,
-        PCFonte0 = 15,
-        estado0 = 16,
-        estado1 = 17,
-        estado2 = 18,
-        estado3 = 19,
+    // Sinais de Controle ( array sinais)
+    enum {
+        ControleUla1 = 0,
+        ControleUla2 = 1,
+        ControleUla3 = 2,
+        PCEsc        = 3,
+        Branch       = 4,
+        IouD         = 5,
+        EscMem       = 6,
+        IREsc        = 7,
+        MemParaReg   = 8,
+        RegDst       = 9,
+        EscReg       = 10,
+        UlaFonteA    = 11,
+        UlaFonteB1   = 12,
+        UlaFonteB0   = 13,
+        PCFonte1     = 14,
+        PCFonte0     = 15,
+        estado0      = 16, // e0 
+        estado1      = 17, // e1
+        estado2      = 18, // e2
+        estado3      = 19  // e3 
     };
 
-    enum opcodes
-    {
+    enum opcodes {
         addi = 4,
         beq  = 8,
         lw   = 11,
@@ -139,4 +131,5 @@
         j_op = 2,
         r_op = 0
     };
+
 #endif

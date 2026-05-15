@@ -2,8 +2,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include "dcl_str_p2.h"
-#include "funcoes.h"
+#include "assinaturas.h"
 
 int carregar_memoria_unificada(typ_memoria_principal *mem)
 {

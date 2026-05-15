@@ -1,5 +1,5 @@
 #include <string.h>
-#include "structs.h"
+#include "assinaturas.h"
 
 typ_decoded_instruction decode_instruction(uint16_t instruction_word) {
     typ_decoded_instruction decoded_ins;
@@ -7,6 +7,7 @@ typ_decoded_instruction decode_instruction(uint16_t instruction_word) {
 
     decoded_ins.instrucao_bruta = instruction_word;
 
+    
     for (int i = 0; i < 16; i++) {
         if ((instruction_word >> (15 - i)) & 1) 
         {
@@ -17,6 +18,7 @@ typ_decoded_instruction decode_instruction(uint16_t instruction_word) {
     }
     decoded_ins.total[16] = '\0';
 
+    
     decoded_ins.opcode = (instruction_word >> 12) & 0x0F;
     decoded_ins.rs     = (instruction_word >> 9)  & 0x07;
     decoded_ins.rt     = (instruction_word >> 6)  & 0x07;
@@ -24,13 +26,14 @@ typ_decoded_instruction decode_instruction(uint16_t instruction_word) {
     decoded_ins.funct  =  instruction_word        & 0x07;
     decoded_ins.addr   =  instruction_word        & 0x7F;
 
+   
     int16_t imm6 = (int16_t)(instruction_word & 0x3F);
     if (imm6 & 0x20) imm6 |= (int16_t)0xFFC0;
     decoded_ins.immediato = imm6;
 
-    if (decoded_ins.opcode == 0) {
+    if (decoded_ins.opcode == r_op) {
         decoded_ins.tipo = r;
-    } else if (decoded_ins.opcode == 2) {
+    } else if (decoded_ins.opcode == j_op) {
         decoded_ins.tipo = j;
     } else {
         decoded_ins.tipo = i;

@@ -100,7 +100,7 @@
         typ_ins instrucao; // instrução decodificada
         typ_all_reg registrador;
         bool sinais[20];
-        bool cont_in[11];
+        bool prox_estado[4];
         
         // estatisticas
         estado_fsm estado;
@@ -150,4 +150,11 @@
         JUMP_COMP = 10
     } estado_fsm;
 
+    enum 
+    {
+        PE3 = 0,
+        PE2 = 1,
+        PE1 = 2,
+        PE0 = 3,
+    };
 #endif

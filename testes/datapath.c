@@ -88,7 +88,7 @@ int caminho_de_dados(typ_state **c, bool clear)
             (**c).dados = (typ_dados) {0};
         }
 
-    //
+    // escrita na memoria
     if ((**c).sinais[EscMem])
         (**c).memoria.palavras[(**c).dados.mux_mem] = (**c).dados.B;
 
@@ -114,6 +114,12 @@ int caminho_de_dados(typ_state **c, bool clear)
     (**c).registrador.intermediario.ULA_saida = (**c).dados.ula.R.resultado;
     (**c).dados.ULA_saida = (**c).registrador.intermediario.ULA_saida;
 
+    // registrador controle
+    (**c).sinais[estado3] = (**c).prox_estado[PE3];
+    (**c).sinais[estado2] = (**c).prox_estado[PE2];
+    (**c).sinais[estado1] = (**c).prox_estado[PE1];
+    (**c).sinais[estado0] = (**c).prox_estado[PE0];
+    
     //______________________________________________________________________________________________
 
 }

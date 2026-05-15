@@ -5,8 +5,9 @@ void Unidade_de_Controle(typ_state **c)
 
     Controle_sinais(c);
     controle_ula_fonte(c);
+    controle_pc_fonte(c);
 
-
+    decodifica_estado_para_sinais(c);
 }
 
 
@@ -99,4 +100,15 @@ void controle_pc_fonte(typ_state **c)
 
     (**c).sinais[PCFonte1] = (((e3 && !e2) && e1) || ((e3 && e2) && e0));
     (**c).sinais[PCFonte0] = (((e3 && !e2) && e1));
+}
+
+
+void decodifica_estado_para_sinais(typ_state *s) {
+    int v = (int)s->estado; // pega o int do enum 0-9
+
+    
+    s->prox_estado[PE0] = (v >> 0) & 1; // bit 0
+    s->prox_estado[PE1] = (v >> 1) & 1; // bit 1
+    s->prox_estado[PE2] = (v >> 2) & 1; // bit 2
+    s->prox_estado[PE3] = (v >> 3) & 1; // bit 3
 }

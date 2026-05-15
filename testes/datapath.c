@@ -12,7 +12,7 @@ int main() // usado para fins de testes somente
     typ_state *c = calloc(1, sizeof(typ_state));
 
 
-    for (int i = 0 ; i < 5; i++)
+    for (int i = 0 ; i < 10; i++)
         caminho_de_dados(&c, 0);
 
 

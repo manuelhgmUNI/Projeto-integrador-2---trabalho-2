@@ -126,6 +126,7 @@
         MEM_WRITE = 5,
         EXEC_I = 6,
         EXEC_R = 7,
+        REG_WRITEBACK = 8,
         BRANCH_COMP = 9,
         JUMP_COMP = 10
     } estado_fsm;

@@ -134,10 +134,15 @@ estado_fsm calcula_proximo_estado(estado_fsm estado_atual, uint16_t opcode) {
             proximo = MEM_WRITEBACK;
             break;
 
+        case EXEC_R:
+            proximo = REG_WRITEBACK;
+            break;
+        case EXEC_I:
+            proximo = REG_WRITEBACK;
+            break;
+
         case MEM_WRITEBACK:
         case MEM_WRITE:
-        case EXEC_R:
-        case EXEC_I:
         case BRANCH_COMP:
         case JUMP_COMP:
             //finalizam e retornam pra fetch

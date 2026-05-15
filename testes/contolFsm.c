@@ -50,8 +50,18 @@ void atualiza_estado(typ_state *s, estado_fsm proximo) {
     s->estado = proximo;
 }
 
+void decodifica_estado_para_sinais(typ_state *s) {
+    int v = (int)s->estado; // pega o int do enum 0-9
+
+    
+    s->sinais[estado0] = (v >> 0) & 1; // bit 0
+    s->sinais[estado1] = (v >> 1) & 1; // bit 1
+    s->sinais[estado2] = (v >> 2) & 1; // bit 2
+    s->sinais[estado3] = (v >> 3) & 1; // bit 3
+}
+
 //ciclo clock 1
-void executar(typ_state *s) {
+/*void executar(typ_state *s) {
     //(FSM) gera os sinais de controle baseados no estado atual
     controle(&s);
 
@@ -75,3 +85,4 @@ void executar(typ_state *s) {
     estado_fsm proximo = calcula_proximo_estado(s->estado, s->ir_decoded.opcode);
     atualiza_estado(s, proximo);
 }
+    */

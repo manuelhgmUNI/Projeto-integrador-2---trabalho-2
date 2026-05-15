@@ -55,9 +55,9 @@
     typedef struct {
         uint16_t RI;       // Instruction Register
         uint16_t RDM;      // Memory Data Register
-        int8_t A;          // Reg A (saída rs)
-        int8_t B;          // Reg B (saída rt)
-        int8_t ALUOut;     // ALU Output Register
+        int8_t A;          // Reg A (saida rs)
+        int8_t B;          // Reg B (saida rt)
+        int8_t ALUOut;     // ALU Out
     } tpy_int_reg;
 
     typedef struct {

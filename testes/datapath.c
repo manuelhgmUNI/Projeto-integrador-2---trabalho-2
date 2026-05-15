@@ -7,18 +7,20 @@
 #include"funcoes.h"
 
 int caminho_de_dados(typ_state **c, bool clear);
+/*
 int main() // usado para fins de testes somente
 {
     typ_state *c = calloc(1, sizeof(typ_state));
-
-
+    
+    
     for (int i = 0 ; i < 10; i++)
-        caminho_de_dados(&c, 0);
-
-
-
+    caminho_de_dados(&c, 0);
+    
+    
+    
     free(c);
 }
+*/
 
 uint8_t mux(uint8_t A,uint8_t B,bool sinal);
 int caminho_de_dados(typ_state **c, bool clear)

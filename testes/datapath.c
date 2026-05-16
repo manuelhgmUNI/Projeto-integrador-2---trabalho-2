@@ -3,8 +3,7 @@
 #include<stdint.h>
 #include<stdbool.h>
 #include"dcl_str_p2.h"
-#include"controle.h"
-#include"funcoes.h"
+#include"assinaturas.h"
 
 int caminho_de_dados(typ_state **c, bool clear);
 /*

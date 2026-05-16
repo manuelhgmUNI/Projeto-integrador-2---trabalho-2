@@ -1,5 +1,5 @@
 #include "dcl_str_p2.h"
-#include "controle.h"
+#include "assinaturas.h"
 
 void Unidade_de_Controle(typ_state **c)
 {

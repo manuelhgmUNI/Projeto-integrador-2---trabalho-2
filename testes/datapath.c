@@ -56,7 +56,7 @@ int caminho_de_dados(typ_state **c, bool clear)
     
     
     // ula
-    (**c).dados.ula.R = ula((**c).dados.A, (**c).dados.B ,(**c).dados.ula.Op );
+    (**c).dados.ula.R = ula((**c).dados.mux_ulaA, (**c).dados.mux_ulaB ,(**c).dados.ula.Op );
 
     // fim do clock
     //______________________________________________________________________________________________

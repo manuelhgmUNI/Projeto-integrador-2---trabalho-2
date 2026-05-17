@@ -37,7 +37,7 @@ int main(void) {
     typ_state *estado;
     estado = calloc(1, sizeof(typ_state));
 
-    const char *fsm_nomes[] = {"FETCH", "DECODE", "MEM_ADDR", "MEM_READ", "MEM_WRITEBACK", "MEM_WRITE", "EXEC_I", "EXEC_R", "BRANCH_COMP", "JUMP_COMP"};
+    const char *fsm_nomes[] = {"FETCH", "DECODE", "MEM_ADDR", "MEM_READ", "MEM_WRITEBACK", "MEM_WRITE", "EXEC_I", "EXEC_R", "REG_WRITEBACK", "BRANCH_COMP", "JUMP_COMP"};
     int num_instrucoes = 0;
 
     do {

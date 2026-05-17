@@ -1,39 +1,63 @@
 #include <stdio.h>
-#include "dcl_str_p2.h"
+#include <string.h>
+#include "assinaturas.h"
 
-void inicia_registradores(int8_t *banco) {
-    int i;
-    for(i = 0; i < 8; i++) {
-        (banco)[i] = 0;
+void inicia_registradores(typ_state *s) {
+    for(int i = 0; i < 8; i++) {
+        s->registrador.banco[i] = 0;
     }
+    s->registrador.PC = 0;
 }
+
 void escreve_registrador(int8_t *banco, int indice, int valor) {
-    //evitar escrever no 0
+    // Evitar escrever no registrador $0 (sempre 0 no MIPS)
     if(indice > 0 && indice < 8) {
-        (banco)[indice] = (int8_t)valor;
+        banco[indice] = (int8_t)valor;
     }
 }
 
 int le_registrador(int8_t *banco, int indice) {
     if(indice >= 0 && indice < 8) {
-        return (int)(banco)[indice];
+        return (int)banco[indice];
     }
     return 0; 
 }
 
-void imprime_registradores(int8_t **banco) {
-    int i;
-    printf("\nBanco de Registradores\n");
-    for(i = 0; i < 8; i++) {
-        printf("$%d: %4d\n", i, (*banco)[i]);
+void imprime_registradores(typ_state *s) {
+    /* converte RI para binário legível */
+    uint16_t ri = s->registrador.intermediario.RI;
+    char ri_bin[17];
+    for (int b = 15; b >= 0; b--)
+        ri_bin[15 - b] = ((ri >> b) & 1) ? '1' : '0';
+    ri_bin[16] = '\0';
+
+    /* decodifica RI para mostrar a instrução atual */
+    char asm_ri[64] = {0};
+    typ_decoded_instruction dec = decode_instruction(ri);
+    asm_gerador_char(asm_ri, &dec);
+    asm_ri[strcspn(asm_ri, "\n")] = '\0';
+
+    printf("\n+-------[ Registradores ]--------------------------------+\n");
+    printf("| PC     : %d\n", s->registrador.PC);
+    printf("| IR     : %s  (%s)\n", ri_bin, asm_ri);
+    printf("| MDR    : %d\n", (int16_t)s->registrador.intermediario.MDR);
+    printf("| A      : %d\n", s->registrador.intermediario.A);
+    printf("| B      : %d\n", s->registrador.intermediario.B);
+    printf("| ALUOut : %d\n", s->registrador.intermediario.ULA_saida);
+    printf("+--------------------------------------------------------+\n");
+    printf("| Banco de Registradores:                                |\n");
+    for (int i = 0; i < 8; i++) {
+        printf("|   $r%d = %d\n", i, s->registrador.banco[i]);
     }
+    printf("+--------------------------------------------------------+\n");
 }
 
-void Banco_de_registradores(uint8_t rs, uint8_t rt, uint8_t rd, bool esc_reg, typ_state **state)
-{
-    (**state).dados.rs = (**state).registrador.banco[rs];
-    (**state).dados.rt = (**state).registrador.banco[rt];
+void Banco_de_registradores(uint16_t rs, uint16_t rt, uint8_t dest, bool escreve, typ_state **c) {
     
-    if (esc_reg)
-        escreve_registrador((**state).registrador.banco, rd, (**state).dados.mux_reg_dest);
+    (**c).dados.rs = (**c).registrador.banco[rs];
+    (**c).dados.rt = (**c).registrador.banco[rt];
+    
+    if (escreve) {
+        escreve_registrador((**c).registrador.banco, dest, (**c).dados.mux_mem_reg);
+    }
 }

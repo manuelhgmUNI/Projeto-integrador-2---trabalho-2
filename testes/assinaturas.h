@@ -55,6 +55,6 @@
     void salva_dat(const typ_state *s, const char *nome);
     void carrega_dat(typ_state *s, const char *nome);
 
-    void run_completo(typ_state *s);
+    void run_completo(typ_state **s);
 
 #endif

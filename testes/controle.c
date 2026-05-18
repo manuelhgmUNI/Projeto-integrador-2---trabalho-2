@@ -40,7 +40,7 @@ void Controle_sinais(typ_state **c)
     (**c).sinais[EscReg] = ( (e2 && !e0) || ( (e3 && !e1) && !e0) );
 
 }
-
+/*
 void controle_ula_fonte(typ_state **c)
 {
     // limpa sinais
@@ -94,6 +94,49 @@ void controle_ula_fonte(typ_state **c)
         (**c).sinais[UlaFonteB1] = 0;
         (**c).sinais[UlaFonteB0] = 0;
     }
+}
+*/
+
+void controle_ula_fonte(typ_state **c)
+{
+    estado_fsm st = (**c).estado;
+
+    if (st == FETCH) {
+        (**c).sinais[UlaFonteA] = 0;
+        (**c).sinais[UlaFonteB1] = 0;
+        (**c).sinais[UlaFonteB0] = 1;
+        return;
+    }
+
+    if (st == DECODE) {
+        (**c).sinais[UlaFonteA] = 0;
+        if ((**c).instrucao.opcode == beq) {
+            (**c).sinais[UlaFonteB1] = 1;
+            (**c).sinais[UlaFonteB0] = 0;
+        } else {
+            (**c).sinais[UlaFonteB1] = 0;
+            (**c).sinais[UlaFonteB0] = 1;
+        }
+        return;
+    }
+
+    if (st == MEM_ADDR || st == MEM_READ || st == MEM_WRITE || st == EXEC_I) {
+        (**c).sinais[UlaFonteA] = 1;
+        (**c).sinais[UlaFonteB1] = 1;
+        (**c).sinais[UlaFonteB0] = 0;
+        return;
+    }
+
+    if (st == EXEC_R || st == BRANCH_COMP) {
+        (**c).sinais[UlaFonteA] = 1;
+        (**c).sinais[UlaFonteB1] = 0;
+        (**c).sinais[UlaFonteB0] = 0;
+        return;
+    }
+
+    (**c).sinais[UlaFonteA] = 0;
+    (**c).sinais[UlaFonteB1] = 0;
+    (**c).sinais[UlaFonteB0] = 0;
 }
 
 void controle_pc_fonte(typ_state **c)

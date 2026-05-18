@@ -11,12 +11,12 @@
    
     // ULA
     typ_ulaR ula(int A, int B, typ_ulaOp operacao);
-    typ_ulaOp controle_ula(bool c1, bool c2, bool c3, uint8_t funct);
     
     // Controle e Datapath
     void Unidade_de_Controle(typ_state **C);
     void Controle_sinais(typ_state **c);
     void controle_ula_fonte(typ_state **c);
+    void controle_ula(typ_state **c);
     void controle_pc_fonte(typ_state **c);
     estado_fsm calcula_proximo_estado(estado_fsm estado_atual, uint16_t opcode);
     void decodifica_estado_para_sinais(typ_state *s);

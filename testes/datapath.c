@@ -24,19 +24,16 @@ int main() // usado para fins de testes somente
 uint8_t mux(uint8_t A,uint8_t B,bool sinal);
 int caminho_de_dados(typ_state **c, bool clear)
 {
-    // geração do sinal com or entre PCesc e o resuldado da and brench e zero ula
-    if ( ((**c).sinais[PCEsc]) || ((**c).dados.ula.R.zero && (**c).sinais[Branch]) )
-    {
-        // escrita no pc
-        (**c).registrador.PC = (**c).dados.ULA_saida;
-    }
+    
 
     (**c).dados.mux_mem = mux((**c).registrador.PC, (**c).registrador.intermediario.ULA_saida, (**c).sinais[IouD]);
-    
     
     //acesso a memoria memoria()
     (**c).dados.saida_mem = (**c).memoria.palavras[(**c).dados.mux_mem];
 
+
+    // decodificação da instrução
+    (**c).instrucao = decode_instruction((**c).registrador.intermediario.RI);
     // controle
     Unidade_de_Controle(c);
 
@@ -64,11 +61,14 @@ int caminho_de_dados(typ_state **c, bool clear)
         {
             (**c).registrador = (typ_all_reg) {0};
             (**c).dados = (typ_dados) {0};
+            return 0;
         }
+
+    
 
     // escrita na memoria
     if ((**c).sinais[EscMem])
-        (**c).memoria.palavras[(**c).dados.mux_mem] = (**c).dados.B;
+        (**c).memoria.palavras[128+(**c).dados.mux_mem] = (**c).dados.B;
 
     // escrita nos intermediarios
 
@@ -91,6 +91,13 @@ int caminho_de_dados(typ_state **c, bool clear)
     // saida da ula
     (**c).registrador.intermediario.ULA_saida = (**c).dados.ula.R.resultado;
     (**c).dados.ULA_saida = (**c).registrador.intermediario.ULA_saida;
+
+    // geração do sinal com or entre PCesc e o resuldado da and brench e zero ula
+    if ( ((**c).sinais[PCEsc]) || ((**c).dados.ula.R.zero && (**c).sinais[Branch]) )
+    {
+        // escrita no pc
+        (**c).registrador.PC = (**c).dados.ULA_saida;
+    }
 
     // sinais de controle
     (**c).sinais[estado3] = (**c).prox_estado[PE3];

@@ -240,8 +240,7 @@ int main(void) {
             }
 
             case 0:
-                memset(estado, 0, sizeof(typ_state));
-                estado->estado = FETCH;
+                *estado = (typ_state) {0};
                 inicia_registradores(estado);
                 backstep_libera();
                 num_instrucoes = 0;

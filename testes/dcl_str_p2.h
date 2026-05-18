@@ -96,9 +96,9 @@
         typ_decoded_instruction instrucao;
         typ_dados dados;
         bool sinais[20];      
-        bool prox_estado[4];
-
-        estado_fsm estado; // Adicionado para rastrear o estado atual da FSM
+        
+        unsigned int prox_estado;
+        unsigned int estado; // Adicionado para rastrear o estado atual da FSM
 
         // stats
         int total_instrucoes;

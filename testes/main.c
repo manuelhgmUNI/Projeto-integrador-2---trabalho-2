@@ -174,7 +174,7 @@ int main(void) {
                 }
 
                 printf("\n+--[ STEP ]------------------------------------------+\n");
-                printf("| PC Atual: %-3d | Estado Atual: %-15s |\n", pc_antes, fsm_nomes[(int)estado_fsm_antes]);
+                printf("| PC Atual: %-3d | Estado Atual: %-15s / %i |\n", pc_antes, fsm_nomes[(int)estado_fsm_antes], estado->estado);
                 printf("| ASM: %-45s |\n", linha_asm);
                 printf("+----------------------------------------------------+\n");
 

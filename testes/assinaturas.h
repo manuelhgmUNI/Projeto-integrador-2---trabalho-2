@@ -21,9 +21,10 @@
     estado_fsm calcula_proximo_estado(estado_fsm estado_atual, uint16_t opcode);
     void decodifica_estado_para_sinais(typ_state *s);
     void decodifica_sinais_para_estado(typ_state *s);
-    void atualiza_estado(typ_state *s, estado_fsm proximo);
+    //void atualiza_estado(typ_state *s, estado_fsm proximo);
+
     int caminho_de_dados(typ_state **c, bool clear);
-    void step_cycle(typ_state *s);
+
     
     // Banco de Registradores
     void inicia_registradores(typ_state *s);

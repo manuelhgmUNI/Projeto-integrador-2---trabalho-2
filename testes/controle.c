@@ -28,6 +28,7 @@ void Unidade_de_Controle(typ_state **c)
         (**c).sinais[PCFonte0]   = 0;
         (**c).sinais[RegDst]     = 1;
         (**c).sinais[Branch]     = 0;
+        (**c).prox_estado        = 1; 
    
     break;
     
@@ -46,6 +47,32 @@ void Unidade_de_Controle(typ_state **c)
         (**c).sinais[PCFonte0]   = 0;
         (**c).sinais[RegDst]     = 1;
         (**c).sinais[Branch]     = 0;
+        switch ((**c).instrucao.opcode)
+        {
+        case lw:
+            (**c).prox_estado        = 2;
+        break;
+
+        case sw:
+            (**c).prox_estado        = 2;
+        break;
+
+        case addi:
+            (**c).prox_estado        = 2;
+        break;
+
+        case r_op:
+            (**c).prox_estado        = 7;
+        break;
+
+        case beq:
+            (**c).prox_estado        = 9;
+        break;
+
+        case j_op:
+            (**c).prox_estado        = 3;
+        break;
+        }
     break;
     
     case 2:
@@ -63,6 +90,20 @@ void Unidade_de_Controle(typ_state **c)
         (**c).sinais[PCFonte0]   = 0;
         (**c).sinais[RegDst]     = 0;
         (**c).sinais[Branch]     = 0;
+        switch ((**c).instrucao.opcode)
+        {
+        case lw:
+            (**c).prox_estado        = 3;
+        break;
+        
+        case sw:
+            (**c).prox_estado        = 5;
+        break;
+
+        case addi:
+            (**c).prox_estado        = 6;
+        break;
+        }
     break;
     
     case 3:
@@ -80,6 +121,8 @@ void Unidade_de_Controle(typ_state **c)
         (**c).sinais[PCFonte0]   = 0;
         (**c).sinais[RegDst]     = 0;
         (**c).sinais[Branch]     = 0;
+        
+        (**c).prox_estado        = 4;
     break;
     
     case 4:
@@ -97,6 +140,8 @@ void Unidade_de_Controle(typ_state **c)
         (**c).sinais[PCFonte0]   = 0;
         (**c).sinais[RegDst]     = 0;
         (**c).sinais[Branch]     = 0;
+        
+        (**c).prox_estado        = 0;
     break;
     
     case 5:
@@ -114,6 +159,9 @@ void Unidade_de_Controle(typ_state **c)
         (**c).sinais[PCFonte0]   = 0;
         (**c).sinais[RegDst]     = 0;
         (**c).sinais[Branch]     = 0;
+        
+        (**c).prox_estado        = 0; 
+
     break;
     
     case 6:
@@ -131,6 +179,9 @@ void Unidade_de_Controle(typ_state **c)
         (**c).sinais[PCFonte0]   = 0;
         (**c).sinais[RegDst]     = 0;
         (**c).sinais[Branch]     = 0;
+        
+        (**c).prox_estado        = 0; 
+
     break;
     
     case 7:
@@ -148,6 +199,9 @@ void Unidade_de_Controle(typ_state **c)
         (**c).sinais[PCFonte0]   = 0;
         (**c).sinais[RegDst]     = 1;
         (**c).sinais[Branch]     = 0;
+        
+        (**c).prox_estado        = 8; 
+
     break;
     
     case 8:
@@ -165,6 +219,8 @@ void Unidade_de_Controle(typ_state **c)
         (**c).sinais[PCFonte0]   = 0;
         (**c).sinais[RegDst]     = 1;
         (**c).sinais[Branch]     = 0;
+        
+        (**c).prox_estado        = 0;
     break;
     
     case 9:
@@ -182,6 +238,8 @@ void Unidade_de_Controle(typ_state **c)
         (**c).sinais[PCFonte0]   = 1;
         (**c).sinais[RegDst]     = 0;
         (**c).sinais[Branch]     = 1;
+        
+        (**c).prox_estado        = 0;
     break;
     
     case 10:
@@ -199,6 +257,8 @@ void Unidade_de_Controle(typ_state **c)
         (**c).sinais[PCFonte0]   = 0;
         (**c).sinais[RegDst]     = 0;
         (**c).sinais[Branch]     = 0;
+        
+        (**c).prox_estado        = 0;
     break;
     
     
@@ -206,9 +266,9 @@ void Unidade_de_Controle(typ_state **c)
         break;
     }
 
-    decodifica_sinais_para_estado(*c);
-    (**c).estado = calcula_proximo_estado((**c).estado, (**c).instrucao.opcode);
-    decodifica_estado_para_sinais(*c);
+    //decodifica_sinais_para_estado(*c);
+    //(**c).estado = calcula_proximo_estado((**c).estado, (**c).instrucao.opcode);
+    //decodifica_estado_para_sinais(*c);
 
 }
 
@@ -458,11 +518,12 @@ void controle_ula(typ_state **c)
 void decodifica_estado_para_sinais(typ_state *s) {
     int v = (int)s->estado; // pega o int do enum 0-9
 
-    
+    /*
     s->prox_estado[PE0] = (v >> 0) & 1; // bit 0
     s->prox_estado[PE1] = (v >> 1) & 1; // bit 1
     s->prox_estado[PE2] = (v >> 2) & 1; // bit 2
     s->prox_estado[PE3] = (v >> 3) & 1; // bit 3
+    */
 }
 
 void decodifica_sinais_para_estado(typ_state *s)

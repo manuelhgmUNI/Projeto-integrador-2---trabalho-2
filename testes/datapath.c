@@ -93,10 +93,11 @@ int caminho_de_dados(typ_state **c, bool clear)
     }
 
     // sinais de controle
-    (**c).sinais[estado3] = (**c).prox_estado[PE3];
-    (**c).sinais[estado2] = (**c).prox_estado[PE2];
-    (**c).sinais[estado1] = (**c).prox_estado[PE1];
-    (**c).sinais[estado0] = (**c).prox_estado[PE0];
+    (**c).estado = (**c).prox_estado;
+    //(**c).sinais[estado3] = (**c).prox_estado[PE3];
+    //(**c).sinais[estado2] = (**c).prox_estado[PE2];
+    //(**c).sinais[estado1] = (**c).prox_estado[PE1];
+    //(**c).sinais[estado0] = (**c).prox_estado[PE0];
     
     //______________________________________________________________________________________________
 

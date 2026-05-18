@@ -26,16 +26,17 @@ int caminho_de_dados(typ_state **c, bool clear)
 {
     
 
-    (**c).dados.mux_mem = mux((**c).registrador.PC, (**c).registrador.intermediario.ULA_saida, (**c).sinais[IouD]);
     
+    (**c).dados.mux_mem = mux((**c).registrador.PC, (**c).registrador.intermediario.ULA_saida, (**c).sinais[IouD]);
     //acesso a memoria memoria()
     (**c).dados.saida_mem = (**c).memoria.palavras[(**c).dados.mux_mem];
-
-
+    
+    
     // decodificação da instrução
     (**c).instrucao = decode_instruction((**c).registrador.intermediario.RI);
     // controle
     Unidade_de_Controle(c);
+    
 
     // mux registrador destino 
     (**c).dados.mux_reg_dest = mux((**c).instrucao.rt, (**c).instrucao.rd, (**c).sinais[RegDst]);
@@ -63,7 +64,6 @@ int caminho_de_dados(typ_state **c, bool clear)
             (**c).dados = (typ_dados) {0};
             return 0;
         }
-
     
 
     // escrita na memoria

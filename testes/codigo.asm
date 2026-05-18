@@ -1,4 +1,4 @@
-sw $r7, $r7, -5
+addi $r0, $r2, -5
 addi $r0, $r1, 3
 add $r3, $r2, $r1
 add $r3, $r2, $r1

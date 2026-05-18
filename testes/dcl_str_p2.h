@@ -13,8 +13,9 @@
         MEM_WRITE = 5,
         EXEC_I = 6,
         EXEC_R = 7,
-        BRANCH_COMP = 8,
-        JUMP_COMP = 9
+        REG_WRITEBACK = 8,
+        BRANCH_COMP = 9,
+        JUMP_COMP = 10
     } estado_fsm;
 
     enum tipos_de_instrucao {
@@ -98,6 +99,7 @@
         bool prox_estado[4];
 
         estado_fsm estado; // Adicionado para rastrear o estado atual da FSM
+        estado_fsm prox_estado_fsm; // Adicionado para auxiliar na transição de estado
 
         // stats
         int total_instrucoes;

@@ -39,13 +39,22 @@ void asm_gerador(typ_memoria_principal *mem, int n, char *nome_arq)
             case i: // Tipo I
                 switch (instrucao.opcode)
                 {
-                    case beq:  fprintf(arquivo, "beq ");  break;
-                    case addi: fprintf(arquivo, "addi "); break;
-                    case lw:   fprintf(arquivo, "lw ");   break;
-                    case sw:   fprintf(arquivo, "sw ");   break;
-                    default:   fprintf(arquivo, "??? ");  break;
+                    case beq:  
+                        fprintf(arquivo, "beq $r%i, $r%i, %i\n", instrucao.rs, instrucao.rt, instrucao.immediato); 
+                        break;
+                    case addi: 
+                        fprintf(arquivo, "addi $r%i, $r%i, %i\n", instrucao.rt, instrucao.rs, instrucao.immediato); 
+                        break;
+                    case lw:   
+                        fprintf(arquivo, "lw $r%i, %i($r%i)\n", instrucao.rt, instrucao.immediato, instrucao.rs);   
+                        break;
+                    case sw:   
+                        fprintf(arquivo, "sw $r%i, %i($r%i)\n", instrucao.rt, instrucao.immediato, instrucao.rs);   
+                        break;
+                    default:   
+                        fprintf(arquivo, "???\n");  
+                        break;
                 }
-                fprintf(arquivo, "$r%i, $r%i, %i\n", instrucao.rs, instrucao.rt, instrucao.immediato);
             break;
 
             case j:

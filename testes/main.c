@@ -34,18 +34,16 @@ static const char *ula_descricao(estado_fsm estado, uint16_t opcode) {
 
 int main(void) {
     int menu = 0;
-    typ_state estado;
-    memset(&estado, 0, sizeof(typ_state));
-    estado.estado = FETCH;
-    inicia_registradores(&estado);
+    typ_state *estado;
+    estado = calloc(1, sizeof(typ_state));
 
-    const char *fsm_nomes[] = {"FETCH", "DECODE", "MEM_ADDR", "MEM_READ", "MEM_WRITEBACK", "MEM_WRITE", "EXEC_I", "EXEC_R", "BRANCH_COMP", "JUMP_COMP"};
+    const char *fsm_nomes[] = {"FETCH", "DECODE", "MEM_ADDR", "MEM_READ", "MEM_WRITEBACK", "MEM_WRITE", "EXEC_I", "EXEC_R", "REG_WRITEBACK", "BRANCH_COMP", "JUMP_COMP"};
     int num_instrucoes = 0;
 
     do {
         printf("\n   -=|| MIPS UNIPAMPA ||=-   \n");
         printf(" PC: %d | Estado Atual: %s | Instrucoes Carregadas: %d | Backstep: %d\n", 
-               estado.registrador.PC, fsm_nomes[(int)estado.estado], num_instrucoes, backstep_get_profundidade());
+               estado->registrador.PC, fsm_nomes[(int)estado->estado], num_instrucoes, backstep_get_profundidade());
         printf("+------+----------------------------------------------------+\n");
         printf("| [1]  | Carregar memoria unificada (.mem)                  |\n");
         printf("| [2]  | Imprimir memorias (instrucoes e dados)             |\n");
@@ -72,34 +70,34 @@ int main(void) {
         switch (menu) {
             case 1:
                 backstep_libera();
-                carregar_memoria_unificada(&estado.memoria);
-                num_instrucoes = conta_instrucoes(&estado);
-                estado.registrador.PC = 0;
-                estado.estado = FETCH;
+                carregar_memoria_unificada(&estado->memoria);
+                num_instrucoes = conta_instrucoes(estado);
+                estado->registrador.PC = 0;
+                estado->estado = FETCH;
                 break;
 
             case 2: 
-                imprime_mem_instrucoes(&estado, num_instrucoes);
+                imprime_mem_instrucoes(estado, num_instrucoes);
                 printf("\nMemoria de dados (128-255):\n");
                 for (int i = 128; i < 256; i++) {
                     
-                        printf("[%03d] = %d\n", i, (int16_t)estado.memoria.palavras[i]);
+                        printf("[%03d] = %d\n", i, (int16_t)estado->memoria.palavras[i]);
                     
                 }
                 break;
 
 
             case 3:
-                imprime_registradores(&estado);
+                imprime_registradores(estado);
                 break;
 
             case 4:
                 printf("\n--- ESTADO COMPLETO ---\n");
-                imprime_registradores(&estado);
+                imprime_registradores(estado);
                 printf("\nMemoria de dados (128-255):\n");
                 for (int i = 128; i < 256; i++) {
-                    if (estado.memoria.palavras[i] != 0) {
-                        printf("[%03d] = %d\n", i, (int16_t)estado.memoria.palavras[i]);
+                    if (estado->memoria.palavras[i] != 0) {
+                        printf("[%03d] = %d\n", i, (int16_t)estado->memoria.palavras[i]);
                     }
                 }
                 printf("\n");
@@ -113,7 +111,7 @@ int main(void) {
                     FILE *f = fopen(buffer, "w");
                     if (f) {
                         for (int i = 0; i < num_instrucoes; i++) {
-                            typ_decoded_instruction dec = decode_instruction(estado.memoria.palavras[i]);
+                            typ_decoded_instruction dec = decode_instruction(estado->memoria.palavras[i]);
                             fprintf(f, "%s\n", dec.total);
                         }
                         fclose(f);
@@ -131,7 +129,7 @@ int main(void) {
                     FILE *f = fopen(nome_dat, "w");
                     if (f) {
                         for (int i = 128; i < 256; i++) {
-                            fprintf(f, "%d\n", (int16_t)estado.memoria.palavras[i]);
+                            fprintf(f, "%d\n", (int16_t)estado->memoria.palavras[i]);
                         }
                         fclose(f);
                         printf("Arquivo .dat salvo: %s\n", nome_dat);
@@ -144,78 +142,84 @@ int main(void) {
             case 7:  // run
                 printf("Executando programa...\n");
                 do {
-                    step_cycle(&estado);
-                } while (estado.registrador.PC < num_instrucoes );
+                    caminho_de_dados(&estado, false);
+                } while (estado->registrador.PC < num_instrucoes );
                 
                 // Reseta PC para 0 quando execução termina
-                estado.registrador.PC = 0;
+                estado->registrador.PC = 0;
                 
-                imprime_registradores(&estado);
-                printf("Execucao finalizada. PC: %d\n", estado.registrador.PC);
+                imprime_registradores(estado);
+                printf("Execucao finalizada. PC: %d\n", estado->registrador.PC);
                 break;
 
 
             case 8: { // step
-                backstep_push(&estado); // Salva o estado atual ANTES de executar o ciclo
+                backstep_push(estado); // Salva o estado atual ANTES de executar o ciclo
 
-                int pc_antes = estado.registrador.PC;
-                estado_fsm estado_fsm_antes = estado.estado;
+                int pc_antes = estado->registrador.PC;
+                estado_fsm estado_fsm_antes = estado->estado;
+                //att
+                typ_decoded_instruction dec_display;
+                if (estado_fsm_antes == FETCH) {
+                    dec_display = decode_instruction(estado->memoria.palavras[pc_antes]);
+                } else {
+                    dec_display = decode_instruction(estado->registrador.intermediario.RI);
+                }
 
                 char linha_asm[64] = {0};
-                typ_decoded_instruction dec;
-                if (estado.estado == FETCH) {
-                    dec = decode_instruction(estado.memoria.palavras[pc_antes]);
+                if (dec_display.instrucao_bruta == 0 && estado_fsm_antes != FETCH) {
+                    sprintf(linha_asm, "nop");
                 } else {
-                    dec = estado.instrucao;
-                }
-                if (dec.instrucao_bruta == 0) {
-                    sprintf(linha_asm, "add $r0, $r0, $r0  ");
-                } else {
-                    asm_gerador_char(linha_asm, &dec);
+                    asm_gerador_char(linha_asm, &dec_display);
                     linha_asm[strcspn(linha_asm, "\n")] = '\0';
                 }
 
                 printf("\n+--[ STEP ]------------------------------------------+\n");
-                printf("| PC Atual: %-3d | Estado Atual: %-15s |\n", pc_antes, fsm_nomes[(int)estado_fsm_antes]);
+                printf("| PC: %-3d | Estado: %-15s | IR: %04X |\n", 
+                       pc_antes, fsm_nomes[(int)estado_fsm_antes], estado->registrador.intermediario.RI);
                 printf("| ASM: %-45s |\n", linha_asm);
                 printf("+----------------------------------------------------+\n");
 
                 int8_t reg_antes[8];
-                for (int i = 0; i < 8; i++) reg_antes[i] = estado.registrador.banco[i];
+                for (int i = 0; i < 8; i++) reg_antes[i] = estado->registrador.banco[i];
 
+                caminho_de_dados(&estado, false);
 
-                memset(estado.sinais, 0, sizeof(estado.sinais)); 
-                step_cycle(&estado);
+                // info ula
+                bool ula_ativa = (estado_fsm_antes == FETCH || estado_fsm_antes == EXEC_R || 
+                                  estado_fsm_antes == EXEC_I || estado_fsm_antes == BRANCH_COMP);
+                
+                if (ula_ativa) {
+                    const char *ula_desc = ula_descricao(estado_fsm_antes, dec_display.opcode);
+                    printf("| ULA (%s) -> Resultado: %-4d | Zero: %s |\n",
+                           ula_desc,
+                           estado->dados.ula.R.resultado,
+                           estado->dados.ula.R.zero ? "Sim" : "Nao");
+                } else {
+                    printf("| ULA: (nao utilizada neste estado)                 |\n");
+                }
 
-                const char *ula_desc = ula_descricao(estado_fsm_antes, dec.opcode);
-                printf("| ULA (%s) -> resultado: %-4d | zero: %s | overflow: %s  |\n",
-                       ula_desc,
-                       estado.dados.ula.R.resultado,
-                       estado.dados.ula.R.zero     ? "sim" : "nao",
-                       estado.dados.ula.R.overflow ? "sim" : "nao");
-
-                printf("| PC: %d -> %d  (Prox Estado: %s)\n", pc_antes, estado.registrador.PC, fsm_nomes[(int)estado.estado]);
+                printf("| PC: %d -> %d | Prox Estado: %s\n", pc_antes, estado->registrador.PC, fsm_nomes[(int)estado->estado]);
                 printf("+----------------------------------------------------+\n");
 
-                printf("| Registradores alterados:                           |\n");
                 bool algum = false;
                 for (int i = 0; i < 8; i++) {
-                    if (estado.registrador.banco[i] != reg_antes[i]) {
-                        printf("|   $r%d: %d -> %d\n", i, reg_antes[i], estado.registrador.banco[i]);
+                    if (estado->registrador.banco[i] != reg_antes[i]) {
+                        if (!algum) printf("| Registradores alterados:                           |\n");
+                        printf("|   $r%d: %d -> %d\n", i, reg_antes[i], estado->registrador.banco[i]);
                         algum = true;
                     }
                 }
-                if (!algum) printf("|   (nenhum)\n");
-                printf("+----------------------------------------------------+\n");
+                if (algum) printf("+----------------------------------------------------+\n");
 
                 break;
             }
 
-            case 9: // backstep totalmente corrigido!
-                if (backstep_pop(&estado)) {
+            case 9: // backstep certo!!!!!!!
+                if (backstep_pop(estado)) {
                     printf("\n>>> Backstep executado! Memoria, banco e PC restaurados. <<<\n");
-                    printf("Restaurado para PC=%d, Estado=%s\n", estado.registrador.PC, fsm_nomes[(int)estado.estado]);
-                    imprime_registradores(&estado);
+                    printf("Restaurado para PC=%d, Estado=%s\n", estado->registrador.PC, fsm_nomes[(int)estado->estado]);
+                    imprime_registradores(estado);
                 } else {
                     printf("Pilha do backstep vazia! Nao ha instrucao anterior para voltar.\n");
                 }
@@ -224,11 +228,11 @@ int main(void) {
 
             case 10: 
                 printf("\n--- ESTATISTICAS ---\n");
-                printf("Total de instrucoes completas: %d\n", estado.total_instrucoes);
-                printf("Tipo R: %i\n", estado.r_instrucoes);
-                printf("Tipo I: %i\n", estado.i_instrucoes);
-                printf("Tipo J: %i\n", estado.j_instrucoes);
-                printf("Somas 0 (NOPs): %i\n", estado.nop_instrucoes);
+                printf("Total de instrucoes completas: %d\n", estado->total_instrucoes);
+                printf("Tipo R: %i\n", estado->r_instrucoes);
+                printf("Tipo I: %i\n", estado->i_instrucoes);
+                printf("Tipo J: %i\n", estado->j_instrucoes);
+                printf("Somas 0 (NOPs): %i\n", estado->nop_instrucoes);
                 break;
 
             case 11: {
@@ -236,7 +240,7 @@ int main(void) {
                 printf("Digite o nome do arquivo a ser gerado (ex: meu_codigo.asm): ");
                 if (scanf("%24s", nome_arq) == 1) {
                     printf("Gerando...\n");
-                    asm_gerador(&estado.memoria, num_instrucoes, nome_arq);
+                    asm_gerador(&estado->memoria, num_instrucoes, nome_arq);
                     printf("Arquivo .asm pronto\n");
                 }
                 limpa_buff();
@@ -244,9 +248,8 @@ int main(void) {
             }
 
             case 0:
-                memset(&estado, 0, sizeof(typ_state));
-                estado.estado = FETCH;
-                inicia_registradores(&estado);
+                *estado = (typ_state) {0};
+                inicia_registradores(estado);
                 backstep_libera();
                 num_instrucoes = 0;
                 printf("Simulador resetado com sucesso!\n");
@@ -262,6 +265,6 @@ int main(void) {
         }
     } while (menu != 123);
 
-    backstep_libera(); // limpa memória na saída
+    backstep_libera(); // limpa memoria na saida
     return 0;
 }

@@ -80,6 +80,9 @@ void salva_binario(const typ_state *s, int num_instrucoes, const char *nome) {
     fclose(f);
 }
 
+/*
+
+
 void step_cycle(typ_state *s) {
     if (s->estado == FETCH) {
         s->instrucao = decode_instruction(s->memoria.palavras[s->registrador.PC]);
@@ -112,9 +115,11 @@ void step_cycle(typ_state *s) {
     atualiza_estado(s, proximo);
 }
 
-void run_completo(typ_state *s) {
+*/
+
+void run_completo(typ_state **s) {
     int limite = 100000;
-    s->estado = FETCH;
-    while (s->registrador.PC != 255 && limite-- > 0)
-        step_cycle(s);
+    (*s)->estado = FETCH;
+    while ((*s)->registrador.PC != 255 && limite-- > 0)
+        caminho_de_dados(s, false);
 }

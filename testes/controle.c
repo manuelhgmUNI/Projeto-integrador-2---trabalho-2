@@ -4,10 +4,207 @@
 void Unidade_de_Controle(typ_state **c)
 {
 
+    /*
     Controle_sinais(c);
     controle_pc_fonte(c);
     controle_ula_fonte(c);
     controle_ula(c);
+    */
+
+    switch ((**c).estado)
+    {
+    case 0:
+        (**c).sinais[PCEsc]      = 1;
+        (**c).sinais[IouD]       = 0;
+        (**c).sinais[EscMem]     = 0;
+        (**c).sinais[IREsc]      = 1;
+        (**c).sinais[MemParaReg] = 0;
+        (**c).sinais[EscReg]     = 0;
+        (**c).sinais[UlaFonteB1] = 0;
+        (**c).sinais[UlaFonteB0] = 1;
+        (**c).sinais[UlaFonteA]  = 0;
+        (**c).dados.ula.Op       = 0;
+        (**c).sinais[PCFonte1]   = 0;
+        (**c).sinais[PCFonte0]   = 0;
+        (**c).sinais[RegDst]     = 1;
+        (**c).sinais[Branch]     = 0;
+   
+    break;
+    
+    case 1:
+        (**c).sinais[PCEsc]      = 0;
+        (**c).sinais[IouD]       = 0;
+        (**c).sinais[EscMem]     = 0;
+        (**c).sinais[IREsc]      = 0;
+        (**c).sinais[MemParaReg] = 0;
+        (**c).sinais[EscReg]     = 0;
+        (**c).sinais[UlaFonteB1] = 1;
+        (**c).sinais[UlaFonteB0] = 0;
+        (**c).sinais[UlaFonteA]  = 0;
+        (**c).dados.ula.Op       = 0;
+        (**c).sinais[PCFonte1]   = 0;
+        (**c).sinais[PCFonte0]   = 0;
+        (**c).sinais[RegDst]     = 1;
+        (**c).sinais[Branch]     = 0;
+    break;
+    
+    case 2:
+        (**c).sinais[PCEsc]      = 0;
+        (**c).sinais[IouD]       = 0;
+        (**c).sinais[EscMem]     = 0;
+        (**c).sinais[IREsc]      = 0;
+        (**c).sinais[MemParaReg] = 0;
+        (**c).sinais[EscReg]     = 0;
+        (**c).sinais[UlaFonteB1] = 1;
+        (**c).sinais[UlaFonteB0] = 0;
+        (**c).sinais[UlaFonteA]  = 1;
+        (**c).dados.ula.Op       = 0;
+        (**c).sinais[PCFonte1]   = 0;
+        (**c).sinais[PCFonte0]   = 0;
+        (**c).sinais[RegDst]     = 0;
+        (**c).sinais[Branch]     = 0;
+    break;
+    
+    case 3:
+        (**c).sinais[PCEsc]      = 0;
+        (**c).sinais[IouD]       = 1;
+        (**c).sinais[EscMem]     = 0;
+        (**c).sinais[IREsc]      = 0;
+        (**c).sinais[MemParaReg] = 0;
+        (**c).sinais[EscReg]     = 0;
+        (**c).sinais[UlaFonteB1] = 1;
+        (**c).sinais[UlaFonteB0] = 0;
+        (**c).sinais[UlaFonteA]  = 1;
+        (**c).dados.ula.Op       = 0;
+        (**c).sinais[PCFonte1]   = 0;
+        (**c).sinais[PCFonte0]   = 0;
+        (**c).sinais[RegDst]     = 0;
+        (**c).sinais[Branch]     = 0;
+    break;
+    
+    case 4:
+        (**c).sinais[PCEsc]      = 0;
+        (**c).sinais[IouD]       = 1;
+        (**c).sinais[EscMem]     = 0;
+        (**c).sinais[IREsc]      = 0;
+        (**c).sinais[MemParaReg] = 1;
+        (**c).sinais[EscReg]     = 1;
+        (**c).sinais[UlaFonteB1] = 1;
+        (**c).sinais[UlaFonteB0] = 0;
+        (**c).sinais[UlaFonteA]  = 1;
+        (**c).dados.ula.Op       = 0;
+        (**c).sinais[PCFonte1]   = 0;
+        (**c).sinais[PCFonte0]   = 0;
+        (**c).sinais[RegDst]     = 0;
+        (**c).sinais[Branch]     = 0;
+    break;
+    
+    case 5:
+        (**c).sinais[PCEsc]      = 0;
+        (**c).sinais[IouD]       = 1;
+        (**c).sinais[EscMem]     = 1;
+        (**c).sinais[IREsc]      = 0;
+        (**c).sinais[MemParaReg] = 0;
+        (**c).sinais[EscReg]     = 0;
+        (**c).sinais[UlaFonteB1] = 1;
+        (**c).sinais[UlaFonteB0] = 0;
+        (**c).sinais[UlaFonteA]  = 1;
+        (**c).dados.ula.Op       = 0;
+        (**c).sinais[PCFonte1]   = 0;
+        (**c).sinais[PCFonte0]   = 0;
+        (**c).sinais[RegDst]     = 0;
+        (**c).sinais[Branch]     = 0;
+    break;
+    
+    case 6:
+        (**c).sinais[PCEsc]      = 0;
+        (**c).sinais[IouD]       = 0;
+        (**c).sinais[EscMem]     = 0;
+        (**c).sinais[IREsc]      = 0;
+        (**c).sinais[MemParaReg] = 0;
+        (**c).sinais[EscReg]     = 1;
+        (**c).sinais[UlaFonteB1] = 1;
+        (**c).sinais[UlaFonteB0] = 0;
+        (**c).sinais[UlaFonteA]  = 1;
+        (**c).dados.ula.Op       = 0;
+        (**c).sinais[PCFonte1]   = 0;
+        (**c).sinais[PCFonte0]   = 0;
+        (**c).sinais[RegDst]     = 0;
+        (**c).sinais[Branch]     = 0;
+    break;
+    
+    case 7:
+        (**c).sinais[PCEsc]      = 0;
+        (**c).sinais[IouD]       = 0;
+        (**c).sinais[EscMem]     = 0;
+        (**c).sinais[IREsc]      = 0;
+        (**c).sinais[MemParaReg] = 0;
+        (**c).sinais[EscReg]     = 0;
+        (**c).sinais[UlaFonteB1] = 0;
+        (**c).sinais[UlaFonteB0] = 0;
+        (**c).sinais[UlaFonteA]  = 1;
+        (**c).dados.ula.Op       = (**c).instrucao.funct;
+        (**c).sinais[PCFonte1]   = 0;
+        (**c).sinais[PCFonte0]   = 0;
+        (**c).sinais[RegDst]     = 1;
+        (**c).sinais[Branch]     = 0;
+    break;
+    
+    case 8:
+        (**c).sinais[PCEsc]      = 0;
+        (**c).sinais[IouD]       = 0;
+        (**c).sinais[EscMem]     = 0;
+        (**c).sinais[IREsc]      = 0;
+        (**c).sinais[MemParaReg] = 0;
+        (**c).sinais[EscReg]     = 1;
+        (**c).sinais[UlaFonteB1] = 0;
+        (**c).sinais[UlaFonteB0] = 0;
+        (**c).sinais[UlaFonteA]  = 1;
+        (**c).dados.ula.Op       = (**c).instrucao.funct;
+        (**c).sinais[PCFonte1]   = 0;
+        (**c).sinais[PCFonte0]   = 0;
+        (**c).sinais[RegDst]     = 1;
+        (**c).sinais[Branch]     = 0;
+    break;
+    
+    case 9:
+        (**c).sinais[PCEsc]      = 0;
+        (**c).sinais[IouD]       = 0;
+        (**c).sinais[EscMem]     = 0;
+        (**c).sinais[IREsc]      = 0;
+        (**c).sinais[MemParaReg] = 0;
+        (**c).sinais[EscReg]     = 0;
+        (**c).sinais[UlaFonteB1] = 0;
+        (**c).sinais[UlaFonteB0] = 0;
+        (**c).sinais[UlaFonteA]  = 1;
+        (**c).dados.ula.Op       = 2;
+        (**c).sinais[PCFonte1]   = 0;
+        (**c).sinais[PCFonte0]   = 1;
+        (**c).sinais[RegDst]     = 0;
+        (**c).sinais[Branch]     = 1;
+    break;
+    
+    case 10:
+        (**c).sinais[PCEsc]      = 1;
+        (**c).sinais[IouD]       = 0;
+        (**c).sinais[EscMem]     = 0;
+        (**c).sinais[IREsc]      = 0;
+        (**c).sinais[MemParaReg] = 0;
+        (**c).sinais[EscReg]     = 0;
+        (**c).sinais[UlaFonteB1] = 0;
+        (**c).sinais[UlaFonteB0] = 0;
+        (**c).sinais[UlaFonteA]  = 0;
+        (**c).dados.ula.Op       = (**c).instrucao.funct;
+        (**c).sinais[PCFonte1]   = 1;
+        (**c).sinais[PCFonte0]   = 0;
+        (**c).sinais[RegDst]     = 0;
+        (**c).sinais[Branch]     = 0;
+    break;
+    
+    
+    default:
+        break;
+    }
 
     decodifica_sinais_para_estado(*c);
     (**c).estado = calcula_proximo_estado((**c).estado, (**c).instrucao.opcode);
@@ -252,8 +449,8 @@ void controle_ula(typ_state **c)
     if ((**c).instrucao.opcode == 8)
     {
         (**c).sinais[ControleUla1] = 0;
-        (**c).sinais[ControleUla2] = 0;
-        (**c).sinais[ControleUla3] = 1;
+        (**c).sinais[ControleUla2] = 1;
+        (**c).sinais[ControleUla3] = 0;
         (**c).dados.ula.Op = SUB;
     }
 }

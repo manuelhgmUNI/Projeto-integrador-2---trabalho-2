@@ -58,13 +58,6 @@ int caminho_de_dados(typ_state **c, bool clear)
 
     // fim do clock
     //______________________________________________________________________________________________
-        if (clear)
-        {
-            (**c).registrador = (typ_all_reg) {0};
-            (**c).dados = (typ_dados) {0};
-            return 0;
-        }
-    
 
     // escrita na memoria
     if ((**c).sinais[EscMem])

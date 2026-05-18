@@ -1,54 +1,69 @@
 #include "dcl_str_p2.h"
 
-typ_ulaOp controle_ula(bool c1, bool c2, bool c3, uint8_t funct)
+void controle_ula(typ_state **c)
 {
-    //ControleUla1 = c1 ControleUla2 = c2 ControleUla3 = c3
+    (**c).sinais[ControleUla1] = 0;
+    (**c).sinais[ControleUla2] = 0;
+    (**c).sinais[ControleUla3] = 0;
+    (**c).dados.ula.Op = ADD;
 
-    // 000 -> ADD
-    if (!c1 && !c2 && !c3)
+    if ((**c).instrucao.tipo == r)
     {
-        return ADD;
-    }
-
-    // 001 -> SUB
-    if (!c1 && !c2 && c3)
-    {
-        return SUB;
-    }
-
-    // 010 -> tipo R
-    if (!c1 && c2 && !c3)
-    {
-        switch (funct)
+        switch ((**c).instrucao.funct)
         {
+            // ADD
             case 0:
-                return ADD;
+                (**c).sinais[ControleUla1] = 0;
+                (**c).sinais[ControleUla2] = 0;
+                (**c).sinais[ControleUla3] = 0;
+                (**c).dados.ula.Op = ADD;
+                break;
 
+            // SUB
             case 2:
-                return SUB;
+                (**c).sinais[ControleUla1] = 0;
+                (**c).sinais[ControleUla2] = 0;
+                (**c).sinais[ControleUla3] = 1;
+                (**c).dados.ula.Op = SUB;
+                break;
 
+            // AND
             case 4:
-                return AND;
+                (**c).sinais[ControleUla1] = 0;
+                (**c).sinais[ControleUla2] = 1;
+                (**c).sinais[ControleUla3] = 1;
+                (**c).dados.ula.Op = AND;
+                break;
 
+            // OR
             case 5:
-                return OR;
-
-            default:
-                return ADD;
+                (**c).sinais[ControleUla1] = 1;
+                (**c).sinais[ControleUla2] = 0;
+                (**c).sinais[ControleUla3] = 0;
+                (**c).dados.ula.Op = OR;
+                break;
         }
     }
 
-    // 011 -> AND
-    if (!c1 && c2 && c3)
+    // LW / SW / ADDI
+
+    if ((**c).instrucao.opcode == 11 || // lw
+        (**c).instrucao.opcode == 15 || // sw
+        (**c).instrucao.opcode == 4)    // addi
     {
-        return AND;
+        (**c).sinais[ControleUla1] = 0;
+        (**c).sinais[ControleUla2] = 0;
+        (**c).sinais[ControleUla3] = 0;
+        (**c).dados.ula.Op = ADD;
     }
 
-    // 100 -> OR
-    if (c1 && !c2 && !c3)
-    {
-        return OR;
-    }
+    // BEQ
 
-    return ADD;
+    if ((**c).instrucao.opcode == 8)
+    {
+        (**c).sinais[ControleUla1] = 0;
+        (**c).sinais[ControleUla2] = 0;
+        (**c).sinais[ControleUla3] = 1;
+        (**c).dados.ula.Op = SUB;
+    }
 }

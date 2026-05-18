@@ -47,19 +47,19 @@ uint8_t mux(uint8_t A,uint8_t B,bool sinal);
 uint8_t mux(uint8_t A,uint8_t B,bool sinal);
 int caminho_de_dados(typ_state **c, bool clear)
 {
-    
+
     // Mux da Memória (IouD)
     (**c).dados.mux_mem = mux((**c).registrador.PC, (**c).registrador.intermediario.ULA_saida, (**c).sinais[IouD]);
-    
+
     // Mux ULA A
     (**c).dados.mux_ulaA = mux((**c).registrador.PC, (**c).registrador.intermediario.A, (**c).sinais[UlaFonteA]);
 
-    // Mux ULA B 
+    // Mux ULA B
     int valor_B;
     if ((**c).sinais[UlaFonteB1] == 0 && (**c).sinais[UlaFonteB0] == 0) valor_B = (**c).registrador.intermediario.B;
     else if ((**c).sinais[UlaFonteB1] == 0 && (**c).sinais[UlaFonteB0] == 1) valor_B = 1; // Para PC + 1
-    else valor_B = (**c).instrucao.immediato; 
-    
+    else valor_B = (**c).instrucao.immediato;
+
     (**c).dados.mux_ulaB = valor_B;
 
     // ula
@@ -80,18 +80,18 @@ int caminho_de_dados(typ_state **c, bool clear)
 
     // acesso memoria
     (**c).dados.saida_mem = (**c).memoria.palavras[(**c).dados.mux_mem];
-    
+
     if ((**c).sinais[EscMem])
         (**c).memoria.palavras[(**c).dados.mux_mem] = (**c).registrador.intermediario.B;
 
     // registradores
     (**c).dados.mux_reg_dest = mux((**c).instrucao.rt, (**c).instrucao.rd, (**c).sinais[RegDst]);
     (**c).dados.mux_mem_reg = mux((**c).dados.ula.R.resultado, (**c).registrador.intermediario.MDR, (**c).sinais[MemParaReg]);
-    
+
     Banco_de_registradores((**c).instrucao.rs, (**c).instrucao.rt, (**c).dados.mux_reg_dest, (**c).sinais[EscReg], c);
 
     //prepara os valores p proximo ciclo
-    
+
     if ((**c).sinais[IREsc])
         (**c).registrador.intermediario.RI = (**c).dados.saida_mem;
 
